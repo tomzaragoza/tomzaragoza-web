@@ -1,0 +1,18 @@
+{
+  "endpoints": [
+    {
+      "name": "get_summary",
+      "title": "Get Summary",
+      "description": "Returns a short public summary for Tom Zaragoza.",
+      "visibility": "public",
+      "text": "building things on the internet"
+    },
+    {
+      "name": "get_details",
+      "title": "Get Details",
+      "description": "Returns authenticated public profile details for Tom Zaragoza.",
+      "visibility": "authenticated",
+      "text": "Tom Zaragoza builds practical internet products, tools, and experiments."
+    }
+  ]
+}
