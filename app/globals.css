@@ -182,11 +182,14 @@ label {
   text-decoration: none;
 }
 
-.social-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1ch;
+.intro .social-links {
+  display: block;
   margin-top: 28px;
+}
+
+.intro .social-links a {
+  display: inline;
+  width: auto;
 }
 
 .admin-shell {

@@ -51,10 +51,13 @@ export default function Home() {
           ))}
         </p>
         <nav className="social-links" aria-label="Social links">
-          {socialLinks.map((link) => (
-            <a key={link.href} href={link.href} rel="me external">
-              {link.text}
-            </a>
+          {socialLinks.map((link, index) => (
+            <Fragment key={link.href}>
+              <a href={link.href} rel="me external">
+                {link.text}
+              </a>
+              {index < socialLinks.length - 1 ? ", " : ""}
+            </Fragment>
           ))}
         </nav>
       </section>
