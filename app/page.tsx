@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 const projects = [
   {
     name: "crawlconsole",
@@ -23,13 +25,11 @@ const projects = [
 
 const socialLinks = [
   {
-    label: "linkedin:",
-    text: "in/tomzaragoza",
+    text: "linkedin",
     href: "https://www.linkedin.com/in/tomzaragoza/"
   },
   {
-    label: "X:",
-    text: "@tomzaragoza",
+    text: "x",
     href: "https://x.com/tomzaragoza"
   }
 ];
@@ -39,19 +39,21 @@ export default function Home() {
     <main className="home">
       <section className="intro" aria-labelledby="site-title">
         <h1 id="site-title">Tom Zaragoza</h1>
-        <p>Building:</p>
-        <nav aria-label="Projects">
-          {projects.map((link) => (
-            <a key={link.href} href={link.href} rel="external">
-              <span>{link.name}</span>
-            </a>
+        <p className="building-sentence">
+          building{" "}
+          {projects.map((link, index) => (
+            <Fragment key={link.href}>
+              <a href={link.href} rel="external">
+                {link.name}
+              </a>
+              {index < projects.length - 1 ? ", " : ""}
+            </Fragment>
           ))}
-        </nav>
-        <nav aria-label="Social links">
+        </p>
+        <nav className="social-links" aria-label="Social links">
           {socialLinks.map((link) => (
             <a key={link.href} href={link.href} rel="me external">
-              <span>{link.label}</span>
-              <span>{link.text}</span>
+              {link.text}
             </a>
           ))}
         </nav>
