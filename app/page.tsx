@@ -21,6 +21,19 @@ const projects = [
   }
 ];
 
+const socialLinks = [
+  {
+    label: "linkedin:",
+    text: "in/tomzaragoza",
+    href: "https://www.linkedin.com/in/tomzaragoza/"
+  },
+  {
+    label: "X:",
+    text: "@tomzaragoza",
+    href: "https://x.com/tomzaragoza"
+  }
+];
+
 export default function Home() {
   return (
     <main className="home">
@@ -31,6 +44,14 @@ export default function Home() {
           {projects.map((link) => (
             <a key={link.href} href={link.href} rel="external">
               <span>{link.name}</span>
+            </a>
+          ))}
+        </nav>
+        <nav aria-label="Social links">
+          {socialLinks.map((link) => (
+            <a key={link.href} href={link.href} rel="me external">
+              <span>{link.label}</span>
+              <span>{link.text}</span>
             </a>
           ))}
         </nav>
