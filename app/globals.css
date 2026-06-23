@@ -179,6 +179,7 @@ label {
 
 .building-sentence a {
   display: inline;
+  text-decoration: none;
 }
 
 .social-links {
