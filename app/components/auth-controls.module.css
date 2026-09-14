@@ -1,0 +1,40 @@
+.controls {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  background: transparent;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.googleLogo {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.identity,
+.error {
+  margin: 0;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.identity {
+  color: var(--muted);
+}
+
+.error {
+  color: var(--danger);
+}

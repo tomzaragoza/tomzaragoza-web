@@ -1,0 +1,635 @@
+.page {
+  --course-background: #151515;
+  --course-text: #f2f2ec;
+  --course-body: #d7d7d1;
+  --course-muted: #a6a69d;
+  --course-faint: #707068;
+  --course-line: #36362f;
+  min-height: 100dvh;
+  color: var(--course-text);
+  background: var(--course-background);
+}
+
+.page a {
+  color: inherit;
+}
+
+.skipLink {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  padding: 8px 10px;
+  color: var(--course-background) !important;
+  background: var(--course-text);
+  transform: translateY(-160%);
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+.courseShell {
+  display: grid;
+  grid-template-columns: 12.5rem minmax(0, 1fr);
+  gap: clamp(3rem, 6vw, 7rem);
+  width: min(calc(100% - 64px), 90rem);
+  margin: 0 auto;
+}
+
+.sidebar {
+  min-width: 0;
+}
+
+.sidebarInner {
+  position: sticky;
+  top: 0;
+  padding: 30px 0;
+}
+
+.mobileNav {
+  display: none;
+}
+
+.switcherWrap {
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--course-line);
+}
+
+.siteSwitcher {
+  position: relative;
+}
+
+.siteSwitcher summary {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 16px;
+  gap: 10px;
+  align-items: center;
+  color: var(--course-text);
+  font-size: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.siteSwitcher summary::-webkit-details-marker {
+  display: none;
+}
+
+.switcherAvatar {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+}
+
+.siteSwitcher summary svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--course-muted);
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  stroke-width: 1.2;
+}
+
+.siteSwitcher[open] summary svg {
+  transform: rotate(180deg);
+}
+
+.switcherMenu {
+  font-family: var(--font-mono);
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 1;
+  display: grid;
+  width: 15.5rem;
+  padding: 7px;
+  border: 1px solid var(--course-line);
+  background: #1d1d1a;
+}
+
+.switcherMenu a {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding: 10px 34px 10px 11px;
+  color: var(--course-muted);
+  font-size: 12px;
+  text-decoration: none;
+  transition: color 160ms ease, background 160ms ease;
+}
+
+.switcherMenu a:hover,
+.switcherMenu .currentPage {
+  color: var(--course-text);
+}
+
+.switcherMenu a:hover {
+  background: #262622;
+}
+
+.checkmark {
+  position: absolute;
+  top: 50%;
+  right: 11px;
+  color: var(--course-text);
+  transform: translateY(-50%);
+}
+
+.contents {
+  display: grid;
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.accountControls {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--course-line);
+}
+
+.navGroup {
+  display: grid;
+  gap: 4px;
+}
+
+.parentLink {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 3px 0;
+  color: var(--course-muted);
+  font-size: 12px;
+  line-height: 1.45;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.parentLink > span:last-child {
+  color: var(--course-faint);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.parentLink:hover,
+.parentLink.activeLink,
+.parentLink.activeParent {
+  color: var(--course-text);
+}
+
+.parentLink:hover > span:last-child,
+.parentLink.activeLink > span:last-child {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.subpages {
+  display: grid;
+  gap: 1px;
+  margin: 3px 0 0 2px;
+  padding-left: 12px;
+  border-left: 1px solid var(--course-line);
+}
+
+.subpages a {
+  padding: 4px 0;
+  color: var(--course-faint);
+  font-size: 11px;
+  line-height: 1.45;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.subpages a:hover,
+.subpages a.activeLink {
+  color: var(--course-text);
+}
+
+.content {
+  min-width: 0;
+  min-height: 100dvh;
+}
+
+.pageHeader {
+  padding: clamp(92px, 15vh, 148px) 0 0;
+}
+
+.pageHeader h1 {
+  max-width: 60rem;
+  margin: 0;
+  color: var(--course-text);
+  font-size: clamp(1.375rem, 2.3vw, 1.75rem);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+.mainContent {
+  position: relative;
+  display: grid;
+  place-items: center;
+  max-width: 48rem;
+  min-height: 440px;
+  margin-top: 24px;
+  padding: 48px 0;
+  overflow: hidden;
+}
+
+.lessonPreview {
+  position: absolute;
+  inset: 32px 0;
+  overflow: hidden;
+  opacity: 0.25;
+  filter: blur(4px);
+  user-select: none;
+  pointer-events: none;
+}
+
+.mainContent.introductionContent {
+  display: block;
+  max-width: 42rem;
+  min-height: 0;
+  padding-top: 0;
+}
+
+.salesCopy {
+  width: 100%;
+  padding-bottom: 64px;
+}
+
+.salesCopy p {
+  margin: 0;
+  color: var(--course-body);
+  font-size: 16px;
+  line-height: 1.75;
+  text-wrap: pretty;
+}
+
+.salesCopy p + p {
+  margin-top: 24px;
+}
+
+.salesLine {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.salesCopy .salesGreeting {
+  color: var(--course-text);
+  font-weight: 600;
+}
+
+.salesCopy em {
+  color: var(--course-text);
+  font-weight: 600;
+}
+
+.salesPoints {
+  display: grid;
+  gap: 18px;
+  margin: 38px 0;
+}
+
+.salesPoints p {
+  color: var(--course-text);
+}
+
+.salesPoints p + p {
+  margin-top: 0;
+}
+
+.presaleCheckout {
+  margin: 34px 0;
+}
+
+.comingSoon {
+  position: relative;
+  width: min(100%, 38rem);
+  padding: 36px 24px;
+  background: rgb(21 21 21 / 92%);
+  text-align: center;
+}
+
+.comingSoon h2 {
+  margin: 0;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+
+.comingSoon p {
+  margin: 20px 0 28px;
+  color: var(--course-body);
+  font-size: 16px;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+.presaleButton {
+  font-family: var(--font-mono);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  max-width: 100%;
+  border: 1px solid var(--course-text);
+  padding: 12px 22px;
+  color: var(--course-background);
+  background: var(--course-text);
+  font-size: 13px;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.comingSoon .presaleCheckout {
+  margin: 0;
+}
+
+.presaleButton:hover:not(:disabled) {
+  background: #fff;
+}
+
+.contentSection + .contentSection {
+  margin-top: 58px;
+}
+
+.contentSection h2 {
+  margin: 0 0 22px;
+  color: var(--course-text);
+  font-size: 17px;
+  font-weight: 400;
+}
+
+.contentSection p {
+  margin: 0;
+  color: var(--course-body);
+  font-size: 16px;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+.contentSection p + p {
+  margin-top: 22px;
+}
+
+.contentSection ul {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  color: var(--course-body);
+  list-style: none;
+}
+
+.contentSection p + ul {
+  margin-top: 26px;
+}
+
+.contentSection li {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  line-height: 1.65;
+}
+
+.contentSection li::before {
+  color: var(--course-faint);
+  content: "—";
+}
+
+.page a:focus-visible,
+.siteSwitcher summary:focus-visible {
+  outline: 2px solid #86a2ff;
+  outline-offset: 4px;
+}
+
+@media (min-width: 821px) {
+  .salesCopy p + p {
+    margin-top: 20px;
+  }
+
+  .salesPoints {
+    margin-block: 30px;
+  }
+
+  .salesPoints p + p {
+    margin-top: 0;
+  }
+
+  .presaleCheckout {
+    margin-block: 30px;
+  }
+}
+
+@media (max-width: 820px) {
+  .mobileNav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: block;
+    background: rgb(21 21 21 / 96%);
+  }
+
+  .mobileTopbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: min(calc(100% - 44px), 36rem);
+    min-height: 68px;
+    margin: 0 auto;
+  }
+
+  .mobileBrand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: fit-content;
+    color: var(--course-text);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-decoration: none;
+  }
+
+  .menuButton,
+  .closeButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    border: 0;
+    padding: 0;
+    color: var(--course-text);
+    background: transparent;
+  }
+
+  .menuButton {
+    flex: 0 0 44px;
+  }
+
+  .menuButton svg,
+  .closeButton svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: square;
+    stroke-width: 1.25;
+  }
+
+  .mobileBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    padding: 0;
+    background: rgb(0 0 0 / 58%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+  }
+
+  .mobileBackdropOpen {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .mobilePanel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 31;
+    display: flex;
+    flex-direction: column;
+    width: min(88vw, 22rem);
+    padding: 18px 22px 24px;
+    color: var(--course-text);
+    background: var(--course-background);
+    box-shadow: 20px 0 50px rgb(0 0 0 / 28%);
+    overflow-y: auto;
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition:
+      transform 220ms ease,
+      visibility 0s linear 220ms;
+  }
+
+  .mobilePanelOpen {
+    transform: translateX(0);
+    visibility: visible;
+    transition:
+      transform 220ms ease,
+      visibility 0s linear 0s;
+  }
+
+  .mobilePanelHeader {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 44px;
+  }
+
+  .mobilePanelNav {
+    display: block;
+    margin-top: 24px;
+    font-size: 12px;
+  }
+
+  .mobileContents {
+    display: grid;
+  }
+
+  .mobileContents a {
+    min-height: 44px;
+    color: var(--course-muted);
+    text-decoration: none;
+  }
+
+  .mobileContents {
+    gap: 2px;
+    padding-top: 4px;
+  }
+
+  .mobileContents a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .mobileContents a > span:last-child {
+    color: var(--course-faint);
+    opacity: 0;
+  }
+
+  .mobileContents .mobileActiveLink {
+    color: var(--course-text);
+  }
+
+  .mobileContents .mobileActiveLink > span:last-child {
+    opacity: 1;
+  }
+
+  .mobileAccountControls {
+    margin-top: auto;
+    padding-top: 24px;
+    border-top: 1px solid var(--course-line);
+  }
+
+  .courseShell {
+    grid-template-columns: 1fr;
+    gap: 0;
+    width: min(calc(100% - 44px), 36rem);
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .pageHeader {
+    padding-top: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageHeader {
+    padding-top: 40px;
+  }
+
+  .mainContent {
+    min-height: 400px;
+    margin-top: 24px;
+    padding: 32px 0;
+  }
+
+  .comingSoon {
+    padding: 28px 12px;
+  }
+
+  .salesCopy {
+    padding-bottom: 48px;
+  }
+
+  .salesPoints {
+    margin: 32px 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobileBackdrop,
+  .mobilePanel,
+  .switcherMenu a,
+  .parentLink,
+  .parentLink > span:last-child,
+  .subpages a {
+    transition: none;
+  }
+}

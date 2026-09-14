@@ -1,4 +1,6 @@
 :root {
+  --font-mono: "SF Mono", "SFMono-Regular", ui-monospace, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
   --background: #f7f7f4;
   --foreground: #171717;
   --muted: #5f5f58;
@@ -38,13 +40,30 @@ body {
   margin: 0;
   color: var(--foreground);
   background: var(--background);
-  font-family: "SF Mono", "SFMono-Regular", ui-monospace, Menlo, Monaco,
-    Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 15px;
-  line-height: 1.55;
+  font-family: var(--font-inter), Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+nav,
+summary,
+footer,
+code,
+pre {
+  font-family: var(--font-mono);
+}
+
+nav {
+  font-size: 15px;
 }
 
 a {
@@ -71,6 +90,10 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+button {
+  font-family: var(--font-mono);
 }
 
 button {
@@ -137,6 +160,8 @@ label {
   min-height: 100dvh;
   place-items: center;
   padding: 32px;
+  font-family: var(--font-mono);
+  font-size: 15px;
 }
 
 .intro {
@@ -154,6 +179,10 @@ label {
 .intro p {
   margin-top: 12px;
   color: var(--muted);
+}
+
+.intro h1 {
+  font-size: 15px;
 }
 
 .intro nav {
@@ -175,11 +204,21 @@ label {
 
 .building-sentence {
   max-width: 34rem;
+  line-height: 1.75;
 }
 
 .building-sentence a {
   display: inline;
   text-decoration: none;
+}
+
+.intro .course-promo {
+  margin-top: 24px;
+  line-height: 1.75;
+}
+
+.course-promo a {
+  display: inline;
 }
 
 .download-page {
@@ -206,8 +245,8 @@ label {
 }
 
 .download-panel h1 {
-  font-size: clamp(1.65rem, 7vw, 2.3rem);
-  line-height: 1.15;
+  font-size: clamp(1.375rem, 2.3vw, 1.75rem);
+  line-height: 1.35;
 }
 
 .download-panel .download-copy {
@@ -248,12 +287,24 @@ label {
 
 .intro .social-links {
   display: block;
-  margin-top: 28px;
+  margin-top: 24px;
+  line-height: 1.75;
 }
 
 .intro .social-links a {
   display: inline;
   width: auto;
+}
+
+.home-footer {
+  margin-top: 24px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+.home-footer a {
+  color: inherit;
 }
 
 .admin-shell {
@@ -277,6 +328,10 @@ label {
   margin: 0;
   font-size: inherit;
   font-weight: 400;
+}
+
+.admin-header h1 {
+  font-size: 15px;
 }
 
 .admin-header p,
@@ -365,7 +420,9 @@ label {
 }
 
 @media (max-width: 520px) {
-  body {
+  .intro h1,
+  .admin-header h1,
+  nav {
     font-size: 14px;
   }
 
