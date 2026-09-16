@@ -574,12 +574,16 @@
 }
 
 .lessonFigure {
-  max-width: 22rem;
+  width: min(100%, 22rem);
   margin: 28px 0 0;
 }
 
 .lessonFigureWide {
-  max-width: 100%;
+  width: min(100%, 40rem);
+}
+
+.lessonFigurePortrait {
+  width: min(100%, 30rem);
 }
 
 .lessonFigure img {

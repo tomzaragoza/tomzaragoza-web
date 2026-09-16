@@ -258,7 +258,15 @@ export function CoursePage({
                       ) : null}
                       {section.note ? <p className={styles.lessonNote}>{section.note}</p> : null}
                       {section.image ? (
-                        <figure className={section.image.wide ? `${styles.lessonFigure} ${styles.lessonFigureWide}` : styles.lessonFigure}>
+                        <figure
+                          className={[
+                            styles.lessonFigure,
+                            section.image.wide ? styles.lessonFigureWide : "",
+                            section.image.wide && section.image.height >= section.image.width * 0.8
+                              ? styles.lessonFigurePortrait
+                              : ""
+                          ].filter(Boolean).join(" ")}
+                        >
                           <a href={section.image.src} target="_blank" rel="noreferrer" aria-label={`Open full-size image: ${section.image.alt}`}>
                             <Image
                               src={section.image.src}
