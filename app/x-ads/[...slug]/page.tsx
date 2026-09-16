@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CoursePage } from "../course-page";
 import { coursePages, getCoursePage } from "../course-data";
+import { getCourseAccess } from "@/lib/course-access";
 
 type CourseRouteProps = {
   params: Promise<{ slug: string[] }>;
@@ -41,5 +42,7 @@ export default async function CourseContentPage({ params }: CourseRouteProps) {
     notFound();
   }
 
-  return <CoursePage page={page} />;
+  const access = await getCourseAccess();
+
+  return <CoursePage page={page} access={access} />;
 }

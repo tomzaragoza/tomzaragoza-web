@@ -1,13 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ChartNoAxesCombined, Eye, MousePointer2 } from "lucide-react";
 import { AuthControls } from "@/app/components/auth-controls";
-import { courseNavigation, type CoursePageDefinition } from "./course-data";
+import type { CourseAccess } from "@/lib/course-access";
+import { courseNavigation, coursePages, type CoursePageDefinition } from "./course-data";
 import { MobileCourseNav } from "./mobile-course-nav";
 import styles from "./x-ads.module.css";
 
+type CoursePageAccess = CourseAccess | "public";
+
 function PresaleCheckout({
   returnPath,
-  label = "Buy the Presale — $20"
+  label = "Unlock the course — $20"
 }: {
   returnPath: string;
   label?: string;
@@ -22,7 +26,44 @@ function PresaleCheckout({
   );
 }
 
-export function CoursePage({ page }: { page: CoursePageDefinition }) {
+function CourseAccessGate({
+  access,
+  returnPath
+}: {
+  access: Exclude<CoursePageAccess, "full" | "public">;
+  returnPath: string;
+}) {
+  const isSignedOut = access === "signed-out";
+
+  return (
+    <section className={styles.accessGate} aria-labelledby="course-access-title">
+      <p className={styles.accessEyebrow}>Course access</p>
+      <h2 id="course-access-title">
+        {isSignedOut ? "Sign in to access the course" : "Upgrade to unlock this lesson"}
+      </h2>
+      <p>
+        {isSignedOut
+          ? "The course is available only to signed-in accounts. Use your Google account to continue."
+          : "Your account is signed in, but it does not have course access yet. Upgrade to open every lesson."}
+      </p>
+      {isSignedOut ? (
+        <div className={styles.gateAuthControls}>
+          <AuthControls />
+        </div>
+      ) : (
+        <PresaleCheckout returnPath={returnPath} />
+      )}
+    </section>
+  );
+}
+
+export function CoursePage({
+  page,
+  access
+}: {
+  page: CoursePageDefinition;
+  access: CoursePageAccess;
+}) {
   const isIntroduction = page.path === "/x-ads";
 
   return (
@@ -66,7 +107,7 @@ export function CoursePage({ page }: { page: CoursePageDefinition }) {
             </div>
 
             <nav className={styles.contents} aria-label="Course contents">
-              {courseNavigation.map((item) => (
+              {courseNavigation.map((item, index) => (
                 <div className={styles.navGroup} key={item.path}>
                   <Link
                     className={`${styles.parentLink} ${
@@ -75,7 +116,12 @@ export function CoursePage({ page }: { page: CoursePageDefinition }) {
                     href={item.path}
                     aria-current={page.path === item.path ? "page" : undefined}
                   >
-                    <span>{item.title}</span>
+                    <span className={styles.navTitle}>
+                      <span className={styles.chapterNumber} aria-hidden="true">
+                        {index === 0 ? "—" : String(index).padStart(2, "0")}
+                      </span>
+                      {item.title}
+                    </span>
                     <span aria-hidden="true">→</span>
                   </Link>
                 </div>
@@ -90,83 +136,162 @@ export function CoursePage({ page }: { page: CoursePageDefinition }) {
         <article className={styles.content} id="course-content">
           <header className={styles.pageHeader}>
             <h1>{page.title}</h1>
+            <p className={styles.pageDescription}>
+              {isIntroduction ? (
+                <>
+                  Go from complete beginner to getting{" "}
+                  <span className={styles.inlineOutcome}><Eye aria-hidden="true" /> impressions</span>,{" "}
+                  <span className={styles.inlineOutcome}><MousePointer2 aria-hidden="true" /> clicks</span>, and{" "}
+                  <span className={styles.inlineOutcome}><ChartNoAxesCombined aria-hidden="true" /> conversions</span>{" "}
+                  for your product in less than 1 hour.
+                </>
+              ) : page.description}
+            </p>
           </header>
 
           <div className={`${styles.mainContent} ${isIntroduction ? styles.introductionContent : ""}`}>
-            {isIntroduction ? (
+            {access === "signed-out" ? (
+              <CourseAccessGate access={access} returnPath={page.path} />
+            ) : isIntroduction ? (
               <section className={styles.salesCopy}>
-                <p className={styles.salesGreeting}>Hey, Tom here</p>
-                <p>
-                  You&apos;re probably here because you clicked an ad on X, have
-                  built something, and you want to get into the hands of your first
-                  customers.
-                </p>
-                <p>
-                  <span className={styles.salesLine}>Well, you&apos;re in luck.</span>
-                  If your customers are on X, running ads on X is the{" "}
-                  <em>perfect</em> way to reach them.
-                </p>
-
-                <PresaleCheckout returnPath={page.path} />
-
-                <div className={styles.salesPoints}>
-                  <p>
-                    You don&apos;t need to be a reply guy for 6 months just to get
-                    your first user.
-                  </p>
-                  <p>
-                    You don&apos;t need to &quot;build an audience&quot; or
-                    &quot;build in public&quot; just to get your first customer.
-                  </p>
+                <div className={styles.authorGreeting}>
+                  <Image
+                    src="/images/tom-zaragoza.jpg"
+                    width={44}
+                    height={44}
+                    alt="Tom Zaragoza"
+                  />
+                  <p>Hey, Tom here!</p>
                 </div>
-
                 <p>
-                  With X ads, you can skip all of that and sell{" "}
-                  <em>directly to your customers</em>.
-                </p>
-                <p>and this course will help show you how.</p>
-
-                <p>
-                  I&apos;ve spent thousands of dollars of my own money learning how
-                  to run X Ads so you don&apos;t have to. Been doing this since 2019,
-                  pre Elon and post Elon.
+                  This textbook will teach you how to run X ads for whatever product
+                  you are building.
                 </p>
                 <p>
-                  I&apos;ll show you what works, what doesn&apos;t work, things you
-                  should avoid, things you should do, and more. Packaged into one
-                  course just for you.
+                  I made it super straightforward and instructional, so don&apos;t
+                  be surprised when you can&apos;t find any fluff inside. I get
+                  straight to the point and tell you what you need to do immediately.
                 </p>
-
-                <PresaleCheckout returnPath={page.path} />
+                <p>
+                  I&apos;ve been running ads on X since 2019 and I can confidently
+                  say it&apos;s the best place to advertise on for indie hackers,
+                  founders, vibe coders that are building software products. Your
+                  customers are on X, it&apos;s cheap to run ads on the platform,
+                  and it just <em>works</em>.
+                </p>
+                <p>
+                  I&apos;ve found hundreds of customers from X Ads and I&apos;ll show you
+                  everything you need to know to do the same.
+                </p>
+                {access === "full" ? (
+                  <>
+                    <p>Your account has full access. Continue to the first lesson.</p>
+                    <Link className={styles.presaleButton} href="/x-ads/principles">
+                      Start the course →
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <p>
+                      If this sounds good, click the button below to unlock the course
+                      and let&apos;s get started.
+                    </p>
+                    <span className={styles.checkoutArrow} aria-hidden="true">&darr;</span>
+                    <PresaleCheckout returnPath={page.path} />
+                  </>
+                )}
+                <section className={styles.curriculum} aria-labelledby="curriculum-title">
+                  <h2 id="curriculum-title">Inside the course</h2>
+                  <p>{courseNavigation.length - 1} chapters to help you prepare, launch, and improve your campaigns.</p>
+                  <ol className={styles.chapterList}>
+                    {courseNavigation.slice(1).map((chapter, index) => (
+                      <li key={chapter.path}>
+                        <Link className={styles.chapterLink} href={chapter.path}>
+                          <span className={styles.chapterNumber} aria-hidden="true">
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
+                          <div>
+                            <h3>{chapter.title}</h3>
+                            <p>{coursePages.find((item) => item.path === chapter.path)?.description}</p>
+                          </div>
+                          <span aria-hidden="true">→</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
               </section>
-            ) : (
-              <>
-                <div className={styles.lessonPreview} aria-hidden="true" inert>
+            ) : access === "full" ? (
+                <div className={styles.lessonContent}>
                   {page.content.map((section, index) => (
                     <section className={styles.contentSection} key={index}>
                       {section.heading ? <h2>{section.heading}</h2> : null}
-                      {section.paragraphs?.map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
+                      {section.paragraphs?.map((paragraph, paragraphIndex) => (
+                        <p key={paragraphIndex}>
+                          {typeof paragraph === "string"
+                            ? paragraph
+                            : paragraph.content.map((part, partIndex) =>
+                                typeof part === "string" ? (
+                                  part
+                                ) : (
+                                  <a
+                                    href={part.href}
+                                    key={partIndex}
+                                    target={part.external ? "_blank" : undefined}
+                                    rel={part.external ? "noreferrer" : undefined}
+                                  >
+                                    {part.label}
+                                  </a>
+                                )
+                              )}
+                        </p>
                       ))}
+                      {section.steps ? (
+                        <ol className={styles.setupSteps}>
+                          {section.steps.map((step) => <li key={step}>{step}</li>)}
+                        </ol>
+                      ) : null}
                       {section.items ? (
                         <ul>
                           {section.items.map((item) => <li key={item}>{item}</li>)}
                         </ul>
                       ) : null}
+                      {section.note ? <p className={styles.lessonNote}>{section.note}</p> : null}
+                      {section.image ? (
+                        <figure className={section.image.wide ? `${styles.lessonFigure} ${styles.lessonFigureWide}` : styles.lessonFigure}>
+                          <a href={section.image.src} target="_blank" rel="noreferrer" aria-label={`Open full-size image: ${section.image.alt}`}>
+                            <Image
+                              src={section.image.src}
+                              alt={section.image.alt}
+                              width={section.image.width}
+                              height={section.image.height}
+                              unoptimized
+                            />
+                          </a>
+                          <figcaption>
+                            {section.image.caption}{" "}
+                            <a href={section.image.source} target="_blank" rel="noreferrer">Source: X</a>
+                          </figcaption>
+                        </figure>
+                      ) : null}
+                      {section.links ? (
+                        <div className={styles.lessonLinks}>
+                          {section.links.map((link) => (
+                            <Link key={link.href} href={link.href}
+                              target={link.href.startsWith("https://") ? "_blank" : undefined}
+                              rel={link.href.startsWith("https://") ? "noreferrer" : undefined}
+                            >{link.label}</Link>
+                          ))}
+                        </div>
+                      ) : null}
                     </section>
                   ))}
                 </div>
-
-                <section className={styles.comingSoon} aria-labelledby="coming-soon-title">
-                  <h2 id="coming-soon-title">Coming soon!</h2>
-                  <p>
-                    I&apos;m in the process of building out this course and running a
-                    presale. Click the button below to buy the presale and get notified
-                    when it comes out!
-                  </p>
-                  <PresaleCheckout returnPath={page.path} />
-                </section>
-              </>
+            ) : (
+              <CourseAccessGate
+                access={access === "public" ? "signed-out" : access}
+                returnPath={page.path}
+              />
             )}
           </div>
         </article>

@@ -138,7 +138,7 @@ export function MobileCourseNav({ currentPath }: { currentPath: string }) {
 
         <nav className={styles.mobilePanelNav} aria-label="Course navigation">
           <div className={styles.mobileContents}>
-            {courseNavigation.map((item) => (
+            {courseNavigation.map((item, index) => (
               <Link
                 className={currentPath === item.path ? styles.mobileActiveLink : ""}
                 href={item.path}
@@ -146,7 +146,12 @@ export function MobileCourseNav({ currentPath }: { currentPath: string }) {
                 onClick={() => closeMenu(false)}
                 key={item.path}
               >
-                <span>{item.title}</span>
+                <span className={styles.navTitle}>
+                  <span className={styles.chapterNumber} aria-hidden="true">
+                    {index === 0 ? "—" : String(index).padStart(2, "0")}
+                  </span>
+                  {item.title}
+                </span>
                 <span aria-hidden="true">→</span>
               </Link>
             ))}

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { PostHogIdentity } from "./components/posthog-identity";
 import "./globals.css";
 
 const inter = localFont({
@@ -42,7 +43,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
-      <body>{children}</body>
+      <body>
+        <PostHogIdentity />
+        {children}
+      </body>
     </html>
   );
 }

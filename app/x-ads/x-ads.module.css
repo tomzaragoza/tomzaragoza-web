@@ -31,9 +31,9 @@
 
 .courseShell {
   display: grid;
-  grid-template-columns: 12.5rem minmax(0, 1fr);
-  gap: clamp(3rem, 6vw, 7rem);
-  width: min(calc(100% - 64px), 90rem);
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: clamp(2.5rem, 5vw, 5rem);
+  width: min(calc(100% - 64px), 74rem);
   margin: 0 auto;
 }
 
@@ -44,7 +44,9 @@
 .sidebarInner {
   position: sticky;
   top: 0;
-  padding: 30px 0;
+  padding: 48px 24px 30px 0;
+  min-height: 100dvh;
+  border-right: 1px solid var(--course-line);
 }
 
 .mobileNav {
@@ -53,7 +55,6 @@
 
 .switcherWrap {
   padding-bottom: 28px;
-  border-bottom: 1px solid var(--course-line);
 }
 
 .siteSwitcher {
@@ -139,14 +140,13 @@
 
 .contents {
   display: grid;
-  gap: 18px;
+  gap: 8px;
   margin-top: 28px;
 }
 
 .accountControls {
   margin-top: 28px;
   padding-top: 24px;
-  border-top: 1px solid var(--course-line);
 }
 
 .navGroup {
@@ -158,7 +158,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 12px;
-  padding: 3px 0;
+  padding: 10px 0;
   color: var(--course-muted);
   font-size: 12px;
   line-height: 1.45;
@@ -213,18 +213,42 @@
 }
 
 .pageHeader {
-  padding: clamp(92px, 15vh, 148px) 0 0;
+  padding: 64px 0 0;
 }
 
 .pageHeader h1 {
   max-width: 60rem;
   margin: 0;
   color: var(--course-text);
-  font-size: clamp(1.375rem, 2.3vw, 1.75rem);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
   font-weight: 400;
-  letter-spacing: -0.025em;
-  line-height: 1.35;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
   text-wrap: balance;
+}
+
+.pageDescription {
+  max-width: 42rem;
+  margin: 20px 0 0;
+  color: var(--course-body);
+  font-size: 16px;
+  line-height: 1.75;
+  text-wrap: pretty;
+}
+
+.inlineOutcome {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.inlineOutcome svg {
+  width: 16px;
+  height: 16px;
+  align-self: center;
+  flex-shrink: 0;
+  stroke-width: 1.75;
 }
 
 .mainContent {
@@ -238,20 +262,15 @@
   overflow: hidden;
 }
 
-.lessonPreview {
-  position: absolute;
-  inset: 32px 0;
-  overflow: hidden;
-  opacity: 0.25;
-  filter: blur(4px);
-  user-select: none;
-  pointer-events: none;
+.lessonContent {
+  width: 100%;
 }
 
 .mainContent.introductionContent {
   display: block;
   max-width: 42rem;
   min-height: 0;
+  margin-top: 36px;
   padding-top: 0;
 }
 
@@ -269,36 +288,115 @@
 }
 
 .salesCopy p + p {
+  margin-top: 32px;
+}
+
+.authorGreeting {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.authorGreeting img {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.authorGreeting p {
+  font-weight: 500;
+  color: var(--course-text);
+}
+
+.checkoutArrow {
+  display: block;
+  margin-top: 20px;
+  color: var(--course-muted);
+  font-size: 28px;
+  font-weight: 300;
+  transform: scaleX(0.65);
+  transform-origin: left center;
+  line-height: 1;
+}
+
+.salesCopy > .checkoutArrow + .presaleCheckout {
   margin-top: 24px;
 }
 
-.salesLine {
-  display: block;
-  margin-bottom: 8px;
-}
-
-.salesCopy .salesGreeting {
+.salesCopy h2 {
+  margin: 38px 0 16px;
   color: var(--course-text);
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.4;
 }
 
-.salesCopy em {
-  color: var(--course-text);
-  font-weight: 600;
-}
-
-.salesPoints {
+.navTitle {
+  font-family: var(--font-inter), Arial, sans-serif;
   display: grid;
-  gap: 18px;
-  margin: 38px 0;
+  grid-template-columns: 22px 1fr;
+  gap: 10px;
 }
 
-.salesPoints p {
-  color: var(--course-text);
+.chapterNumber {
+  color: var(--course-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
 }
 
-.salesPoints p + p {
-  margin-top: 0;
+.salesCopy > .presaleCheckout {
+  margin: 24px 0 32px;
+}
+
+.salesCopy > .presaleButton {
+  margin-top: 24px;
+}
+
+.curriculum h2 {
+  margin: 0 0 8px;
+}
+
+.curriculum > p {
+  color: var(--course-muted);
+  font-size: 14px;
+}
+
+.chapterList {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--course-line);
+}
+
+.chapterList li {
+  border-bottom: 1px solid var(--course-line);
+}
+
+.chapterLink {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) 16px;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 4px;
+  text-decoration: none;
+}
+
+.chapterLink:hover {
+  background: #1d1d1a;
+}
+
+.chapterLink h3 {
+  margin: 0 0 2px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.chapterLink p {
+  color: var(--course-muted);
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 .presaleCheckout {
@@ -330,27 +428,92 @@
 }
 
 .presaleButton {
-  font-family: var(--font-mono);
+  font-family: var(--font-inter), Arial, sans-serif;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
+  min-height: 32px;
   max-width: 100%;
-  border: 1px solid var(--course-text);
-  padding: 12px 22px;
-  color: var(--course-background);
-  background: var(--course-text);
-  font-size: 13px;
-  line-height: 1.5;
+  border: 1px solid #36a58c;
+  border-radius: 9px;
+  padding: 5px 12px;
+  color: #ffffff;
+  background: #007f66;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
   text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 20%), inset 0 1px 0 rgb(255 255 255 / 3%);
+  transition: background-color 150ms ease, box-shadow 150ms ease;
 }
 
 .comingSoon .presaleCheckout {
   margin: 0;
 }
 
+.accessGate {
+  width: min(100%, 36rem);
+  padding: 36px;
+  border: 1px solid var(--course-line);
+  background: #1b1b19;
+  text-align: center;
+}
+
+.accessGate .accessEyebrow {
+  margin: 0 0 10px;
+  color: var(--course-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.accessGate h2 {
+  margin: 0;
+  color: var(--course-text);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+}
+
+.accessGate > p:not(.accessEyebrow) {
+  margin: 18px auto 0;
+  max-width: 29rem;
+  color: var(--course-body);
+  font-size: 15px;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+.accessGate .presaleCheckout {
+  margin: 28px 0 0;
+}
+
+.gateAuthControls {
+  width: min(100%, 22rem);
+  margin: 28px auto 0;
+}
+
 .presaleButton:hover:not(:disabled) {
-  background: #fff;
+  background: #006b56;
+}
+
+.presaleButton:focus-visible {
+  outline: 2px solid #36a58c;
+  outline-offset: 3px;
+}
+
+.presaleButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (pointer: coarse) {
+  .presaleButton {
+    min-height: 44px;
+  }
 }
 
 .contentSection + .contentSection {
@@ -376,6 +539,63 @@
   margin-top: 22px;
 }
 
+.contentSection .setupSteps {
+  display: grid;
+  gap: 16px;
+  margin: 24px 0 0;
+  padding-left: 24px;
+  color: var(--course-body);
+}
+
+.contentSection .setupSteps li {
+  display: list-item;
+  padding-left: 6px;
+}
+
+.contentSection .setupSteps li::before {
+  content: none;
+}
+
+.contentSection .lessonNote {
+  overflow-wrap: anywhere;
+  margin-top: 24px;
+  padding-left: 16px;
+  border-left: 2px solid var(--course-line);
+  color: var(--course-muted);
+  font-size: 14px;
+}
+
+.lessonLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 24px;
+  font-size: 14px;
+}
+
+.lessonFigure {
+  max-width: 22rem;
+  margin: 28px 0 0;
+}
+
+.lessonFigureWide {
+  max-width: 100%;
+}
+
+.lessonFigure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.lessonFigure figcaption {
+  margin-top: 10px;
+  color: var(--course-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
 .contentSection ul {
   display: grid;
   gap: 12px;
@@ -386,6 +606,10 @@
 }
 
 .contentSection p + ul {
+  margin-top: 26px;
+}
+
+.contentSection .setupSteps + ul {
   margin-top: 26px;
 }
 
@@ -407,18 +631,6 @@
 }
 
 @media (min-width: 821px) {
-  .salesCopy p + p {
-    margin-top: 20px;
-  }
-
-  .salesPoints {
-    margin-block: 30px;
-  }
-
-  .salesPoints p + p {
-    margin-top: 0;
-  }
-
   .presaleCheckout {
     margin-block: 30px;
   }
@@ -461,14 +673,19 @@
     justify-content: center;
     min-width: 44px;
     min-height: 44px;
-    border: 0;
     padding: 0;
-    color: var(--course-text);
-    background: transparent;
   }
 
   .menuButton {
     flex: 0 0 44px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .menuButton:hover:not(:disabled) {
+    background: transparent;
   }
 
   .menuButton svg,
@@ -489,11 +706,17 @@
     width: 100%;
     height: 100%;
     border: 0;
+    border-radius: 0;
+    box-shadow: none;
     padding: 0;
     background: rgb(0 0 0 / 58%);
     opacity: 0;
     pointer-events: none;
     transition: opacity 200ms ease;
+  }
+
+  .mobileBackdrop:hover:not(:disabled) {
+    background: rgb(0 0 0 / 58%);
   }
 
   .mobileBackdropOpen {
@@ -614,16 +837,18 @@
     padding: 28px 12px;
   }
 
+  .accessGate {
+    padding: 28px 18px;
+  }
+
   .salesCopy {
     padding-bottom: 48px;
   }
 
-  .salesPoints {
-    margin: 32px 0;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .presaleButton,
   .mobileBackdrop,
   .mobilePanel,
   .switcherMenu a,

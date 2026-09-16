@@ -2,6 +2,14 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { randomBytes } from "node:crypto";
 import { getGoogleAuth } from "../lib/google-auth.ts";
+import { hasComplimentaryCourseAccess } from "../lib/course-access-policy.ts";
+
+test("complimentary course access uses the configured Google email", () => {
+  assert.equal(hasComplimentaryCourseAccess("tomdzaragoza@gmail.com"), true);
+  assert.equal(hasComplimentaryCourseAccess(" TOMDZARAGOZA@GMAIL.COM "), true);
+  assert.equal(hasComplimentaryCourseAccess("someone@example.com"), false);
+  assert.equal(hasComplimentaryCourseAccess(null), false);
+});
 
 test("Google sign-in rejects unsafe requests without connecting to MongoDB", async (t) => {
   const names = [

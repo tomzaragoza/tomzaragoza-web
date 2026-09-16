@@ -17,7 +17,7 @@ export default function PrivacyPage() {
   return (
     <>
       <h1>Privacy Policy</h1>
-      <p>Last updated: September 13, 2026</p>
+      <p>Last updated: September 14, 2026</p>
       <p>
         This policy explains how Tom Zaragoza handles personal information on
         tomzaragoza.com. It covers this website, its course pages, and its sign-in
@@ -47,6 +47,18 @@ export default function PrivacyPage() {
         </li>
       </ul>
 
+      <h2>Website analytics</h2>
+      <p>
+        This site uses PostHog to understand page visits, navigation, and
+        interactions with page elements. Analytics can include visited URLs,
+        referring websites, browser and device information, and approximate
+        location derived from your IP address. A browser identifier connects
+        visits from the same browser. If you sign in, your account identifier
+        connects that activity to your account. The site resets the analytics
+        identity after sign-out. Session recording is disabled, and captured
+        element text and attributes are masked.
+      </p>
+
       <h2>How information is used</h2>
       <p>
         Account information is used to sign you in, display your account identity,
@@ -57,15 +69,18 @@ export default function PrivacyPage() {
       <h2>Cookies</h2>
       <p>
         Cookies are small pieces of data stored by your browser. This site uses
-        cookies for sign-in and session security. You can clear or block cookies
-        in your browser, but sign-in features may stop working. You can read the
-        public course pages without signing in.
+        cookies for sign-in and session security. PostHog uses cookies and local
+        browser storage to recognize returning browsers. You can clear or block cookies
+        in your browser, but sign-in features may stop working. The course
+        introduction is public. Course lessons require an active sign-in session.
       </p>
 
       <h2>Service providers and disclosure</h2>
       <p>
         Google processes information when you use Google sign-in under its own{" "}
         <a href="https://policies.google.com/privacy">privacy policy</a>.
+        {" "}PostHog processes analytics data through its US Cloud service. See
+        its <a href="https://posthog.com/privacy">privacy policy</a>.{" "}
         Hosting and database services process information needed to operate the
         site. Depending on their infrastructure, information may be processed
         outside the country where you live. Information may also be disclosed

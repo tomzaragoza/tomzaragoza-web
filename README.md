@@ -15,6 +15,32 @@ The MCP endpoint exposes one tool:
 
 Endpoint definitions live in `content/endpoints.json`.
 
+## PostHog analytics
+
+PostHog starts in `instrumentation-client.ts`. It captures page views, including
+navigation between course pages, and interactions with page elements. Text and
+element attributes are masked. Session recording is disabled. Admin page events
+are excluded.
+
+Set `NEXT_PUBLIC_POSTHOG_KEY` to the project token and
+`NEXT_PUBLIC_POSTHOG_HOST` to `https://us.i.posthog.com` for US Cloud. Set these
+in `.env` locally and in the hosting environment before building for production.
+Next.js includes these public values in the browser code at build time.
+`POSTHOG_PROJECT_ID` is a reference value and is not needed by the browser SDK.
+When the project token is absent, analytics does not start.
+
+Anonymous visitor IDs persist in browser storage. After sign-in, analytics uses
+the account ID. It resets the identity after sign-out or an account change.
+Names and email addresses are not sent as account properties.
+PostHog can add approximate location to events from the visitor's IP address,
+subject to the project's geographic data settings. Currency selection is not
+implemented by this integration.
+
+To verify a deployment, open the site and navigate to another course page.
+Check for `$pageview` events in the PostHog activity feed. The two events should
+have the same anonymous visitor ID. Use a separate test project for local work
+if development events should be excluded from production reports.
+
 ## Google sign-in
 
 Google sign-in uses Better Auth and the existing `MONGODB_URL` in `.env`.
@@ -41,7 +67,8 @@ For a Google app in testing mode, add the Google accounts that will test sign-in
 
 Sign in from the X Ads sidebar or `/sign-in`. After sign-in, the sidebar shows the user's name and a sign-out button.
 Sign-in returns to the current course page. Sign-in from `/sign-in` returns to `/x-ads`.
-Course pages remain public. Google sign-in does not grant admin or MCP access.
+The course introduction is public. Lesson content requires Google sign-in. The server checks each signed-in email against the complimentary-access allowlist.
+Accounts without complimentary access see the course checkout. Google sign-in does not grant admin or MCP access.
 
 Better Auth stores users, linked Google accounts, sessions, and verification records in the
 `auth_users`, `auth_accounts`, `auth_sessions`, and `auth_verifications` collections.
@@ -52,7 +79,7 @@ Setup references: [Google provider](https://better-auth.com/docs/authentication/
 [MongoDB adapter](https://better-auth.com/docs/adapters/mongo).
 
 Run `npm run test:auth` to check missing configuration, anonymous sessions, unsafe return URLs,
-cross-origin sign-out, and invalid callbacks. These tests use fake credentials and do not connect to MongoDB.
+cross-origin sign-out, invalid callbacks, and the complimentary-access rule. These tests use fake credentials and do not connect to MongoDB.
 To check the complete flow, configure Google credentials, sign in from a course page, reload it,
 and sign out. The name should persist after reload and disappear after sign-out.
 
