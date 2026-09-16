@@ -31,6 +31,11 @@ export function getGoogleAuth() {
   auth = betterAuth<BetterAuthOptions>({
     appName: "Tom Zaragoza",
     baseURL,
+    trustedOrigins: [
+      baseURL,
+      "https://tomzaragoza.com",
+      "https://www.tomzaragoza.com"
+    ],
     secret,
     database: mongodbAdapter(client.db(process.env.MONGODB_DB || "tomzaragoza")),
     user: { modelName: "auth_users" },

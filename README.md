@@ -59,6 +59,7 @@ In the Google OAuth web client, add these **Authorized redirect URIs**:
 
 ```text
 http://localhost:3000/api/auth/callback/google
+https://www.tomzaragoza.com/api/auth/callback/google
 https://tomzaragoza.com/api/auth/callback/google
 ```
 

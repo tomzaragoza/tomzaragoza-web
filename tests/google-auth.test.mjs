@@ -74,6 +74,18 @@ test("Google sign-in rejects unsafe requests without connecting to MongoDB", asy
     assert.equal(response.status, 403);
   });
 
+  await t.test("the production www origin is trusted", async () => {
+    const response = await auth.handler(new Request("http://localhost:3000/api/auth/sign-out", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "https://www.tomzaragoza.com"
+      },
+      body: "{}"
+    }));
+    assert.notEqual(response.status, 403);
+  });
+
   await t.test("a callback without OAuth state cannot create a session", async () => {
     const response = await auth.handler(new Request("http://localhost:3000/api/auth/callback/google?code=forged"));
     assert.ok(response.status >= 300 && response.status < 400);
