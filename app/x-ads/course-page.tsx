@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChartNoAxesCombined, Eye, MousePointer2 } from "lucide-react";
+import { ChartNoAxesCombined, Eye, MousePointer2, Target } from "lucide-react";
 import { AuthControls } from "@/app/components/auth-controls";
 import type { CourseAccess } from "@/lib/course-access";
 import { courseNavigation, coursePages, type CoursePageDefinition } from "./course-data";
@@ -191,17 +191,20 @@ export function CoursePage({
         <article className={styles.content} id="course-content">
           <header className={styles.pageHeader}>
             <h1>{page.title}</h1>
-            <p className={styles.pageDescription}>
-              {isIntroduction ? (
-                <>
-                  Go from complete beginner to getting{" "}
-                  <span className={styles.inlineOutcome}><Eye aria-hidden="true" /> impressions</span>,{" "}
-                  <span className={styles.inlineOutcome}><MousePointer2 aria-hidden="true" /> clicks</span>, and{" "}
-                  <span className={styles.inlineOutcome}><ChartNoAxesCombined aria-hidden="true" /> conversions</span>{" "}
-                  for your product in less than 1 hour.
-                </>
-              ) : page.description}
-            </p>
+            {isIntroduction ? (
+              <p className={styles.pageDescription}>
+                Go from complete beginner to getting{" "}
+                <span className={styles.inlineOutcome}><Eye aria-hidden="true" /> impressions</span>,{" "}
+                <span className={styles.inlineOutcome}><MousePointer2 aria-hidden="true" /> clicks</span>, and{" "}
+                <span className={styles.inlineOutcome}><ChartNoAxesCombined aria-hidden="true" /> conversions</span>{" "}
+                for your product in less than 1 hour.
+              </p>
+            ) : (
+              <div className={styles.outcomeCard}>
+                <Target aria-hidden="true" />
+                <p>{page.outcome ?? page.description}</p>
+              </div>
+            )}
           </header>
 
           <div className={`${styles.mainContent} ${isIntroduction ? styles.introductionContent : ""}`}>

@@ -236,6 +236,35 @@
   text-wrap: pretty;
 }
 
+.outcomeCard {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  max-width: 42rem;
+  margin-top: 20px;
+  padding: 16px 18px;
+  border: 1px solid var(--course-line);
+  border-radius: 8px;
+  background: transparent;
+}
+
+.outcomeCard svg {
+  width: 20px;
+  height: 20px;
+  margin-top: 3px;
+  color: #36a58c;
+  stroke-width: 1.75;
+}
+
+.outcomeCard p {
+  margin: 0;
+  color: var(--course-body);
+  font-size: 15px;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
 .inlineOutcome {
   display: inline-flex;
   align-items: baseline;

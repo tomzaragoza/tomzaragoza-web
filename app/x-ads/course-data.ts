@@ -28,6 +28,7 @@ export type CoursePageDefinition = {
   path: string;
   title: string;
   description: string;
+  outcome?: string;
   content: readonly CourseContentSection[];
 };
 
@@ -54,6 +55,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/principles",
     title: "Core principles",
     description: "Before you spend any money on ads, these are the five things I want you to understand.",
+    outcome: "You will know the five principles to follow before you plan, track, or launch an X Ads campaign.",
     content: [
       {
         heading: "Ad platforms are basically AI marketing engines",
@@ -97,6 +99,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/account",
     title: "Set up your X Ads account",
     description: "Get your blue checkmark, open Ads Manager, and add your payment method. Follow these steps in order.",
+    outcome: "You will have an ad-ready X profile, access to Ads Manager, and an active payment method.",
     content: [
       {
         heading: "1. Get your account ready",
@@ -184,6 +187,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/analytics",
     title: "Set up your analytics",
     description: "Know where your visitors came from, watch what they do, and make sure you can measure the results before you spend on ads.",
+    outcome: "You will be able to trace an ad click through your site and measure the actions that follow.",
     content: [
       {
         heading: "1. Set up session replays",
@@ -278,6 +282,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/tracking",
     title: "Tracking pixel setup",
     description: "Install the X Pixel, create the conversion events that match your customer journey, and verify the data before you launch.",
+    outcome: "You will have verified pixel events for the customer actions you want X Ads to optimize.",
     content: [
       {
         heading: "1. Understand what the X Pixel sends",
@@ -448,6 +453,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/launch",
     title: "Launch your first campaign",
     description: "Create a Sales campaign, organize your targeting into ad groups, and build ads that show people what your product can do.",
+    outcome: "You will have a complete Sales campaign with focused audiences, verified tracking, and product-led ads.",
     content: [
       {
         heading: "1. Start a Sales campaign",
@@ -621,6 +627,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/improve",
     title: "Improve your campaign",
     description: "Use campaign results to decide what to do next.",
+    outcome: "You will be able to read campaign results and decide when to wait, change, stop, or increase spending.",
     content: [
       {
         paragraphs: [
@@ -633,6 +640,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/beyond",
     title: "Beyond X Ads",
     description: "Connect your campaigns to the rest of your business.",
+    outcome: "You will know how to connect paid acquisition to onboarding, retention, and organic growth.",
     content: [
       {
         paragraphs: [
@@ -645,6 +653,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/plan",
     title: "Plan your campaign",
     description: "Decide what you will test before you spend money.",
+    outcome: "You will have a clear campaign goal, offer, and test structure before you enter Ads Manager.",
     content: [
       {
         paragraphs: [
@@ -657,6 +666,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/plan/offer",
     title: "Start with the offer",
     description: "Define one clear reason for the right person to click your ad.",
+    outcome: "You will have one clear offer for one audience and one measurable conversion.",
     content: [
       {
         paragraphs: [
@@ -676,6 +686,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/plan/structure",
     title: "Structure the campaign",
     description: "Build a simple test that gives you a useful answer.",
+    outcome: "You will have a campaign structure that isolates each audience idea and produces a useful result.",
     content: [
       {
         paragraphs: [
@@ -688,6 +699,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/build",
     title: "Build the campaign",
     description: "Turn the plan into an audience and a set of ads.",
+    outcome: "You will turn your campaign plan into a focused audience and a clear set of ads.",
     content: [
       {
         paragraphs: [
@@ -700,6 +712,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/build/audience",
     title: "Find the audience",
     description: "Reach people who already care about the problem you solve.",
+    outcome: "You will have focused audience groups based on relevant accounts, interests, keywords, and locations.",
     content: [
       {
         paragraphs: [
@@ -712,6 +725,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/build/creative",
     title: "Make the ads",
     description: "Turn one customer problem into ads people understand quickly.",
+    outcome: "You will have clear ads that show one customer problem, the product result, and the next action.",
     content: [
       {
         paragraphs: [
@@ -724,6 +738,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/measure",
     title: "Measure the campaign",
     description: "Connect campaign activity to customer actions.",
+    outcome: "You will have a measurement plan that connects ad activity to customer actions.",
     content: [
       {
         paragraphs: [
@@ -736,6 +751,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/measure/tracking",
     title: "Track the result",
     description: "Measure what happens between the first impression and the sale.",
+    outcome: "You will be able to verify the path from impression and click to signup and sale.",
     content: [
       {
         paragraphs: [
@@ -748,6 +764,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/measure/results",
     title: "Read the data",
     description: "Use campaign data to decide what you will do next.",
+    outcome: "You will be able to use campaign data to choose whether to stop, change, or continue the test.",
     content: [
       {
         paragraphs: [
@@ -760,6 +777,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/resources",
     title: "Resources",
     description: "Use the same templates and checks throughout the course.",
+    outcome: "You will know which template or checklist to use at each stage of the campaign.",
     content: [
       {
         paragraphs: [
@@ -772,6 +790,7 @@ export const coursePages: readonly CoursePageDefinition[] = [
     path: "/x-ads/resources/working-files",
     title: "Working files",
     description: "Keep the course templates beside your campaign.",
+    outcome: "You will have the planning, creative, and tracking files ready beside your campaign.",
     content: [
       {
         items: [
