@@ -1,0 +1,219 @@
+.shell {
+  width: min(calc(100% - 48px), 1180px);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 44px 0 72px;
+}
+
+.header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.header h1,
+.header p {
+  margin: 0;
+}
+
+.header h1 {
+  margin-top: 8px;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.header p,
+.hint,
+.status,
+.videoEditor p,
+.empty,
+.emptyState,
+.sectionButton small,
+.sectionEditor label small {
+  color: var(--muted);
+}
+
+.header p {
+  margin-top: 8px;
+}
+
+.editor {
+  display: grid;
+  gap: 18px;
+}
+
+.tokenRow,
+.pageBar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.tokenRow button,
+.pageBar button {
+  min-width: 132px;
+}
+
+.hint,
+.status,
+.videoEditor p,
+.empty,
+.emptyState {
+  margin: 0;
+}
+
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.error {
+  color: var(--danger);
+}
+
+.pageBar {
+  margin-top: 8px;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  min-height: 620px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.sectionList {
+  padding: 14px;
+  border-right: 1px solid var(--border);
+}
+
+.sectionListHeader,
+.fieldGroupHeader,
+.sectionEditorHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.sectionListHeader {
+  margin-bottom: 12px;
+}
+
+.sectionListHeader button,
+.fieldGroupHeader button,
+.sectionEditorHeader button {
+  min-height: 30px;
+  padding: 4px 9px;
+  font-size: 12px;
+}
+
+.sectionButton {
+  display: grid;
+  justify-content: stretch;
+  width: 100%;
+  min-height: 0;
+  margin-top: 5px;
+  border-color: transparent;
+  border-radius: 6px;
+  padding: 10px;
+  color: var(--foreground);
+  background: transparent;
+  box-shadow: none;
+  text-align: left;
+}
+
+.sectionButton:hover:not(:disabled),
+.sectionButtonActive {
+  border-color: var(--border);
+  background: var(--background);
+}
+
+.sectionButton small {
+  font-size: 11px;
+}
+
+.sectionEditor {
+  display: grid;
+  align-content: start;
+  gap: 20px;
+  padding: 24px;
+}
+
+.sectionEditor h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.dangerButton {
+  color: var(--danger);
+}
+
+.fieldGroup,
+.videoEditor {
+  display: grid;
+  gap: 14px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.sectionEditor textarea {
+  min-height: 116px;
+}
+
+.empty {
+  padding: 12px 4px;
+}
+
+.emptyState {
+  display: grid;
+  min-height: 320px;
+  place-items: center;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .shell {
+    width: min(calc(100% - 36px), 42rem);
+    padding-top: 28px;
+  }
+
+  .header,
+  .sectionEditorHeader {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .tokenRow,
+  .pageBar,
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .tokenRow button,
+  .pageBar button {
+    width: 100%;
+  }
+
+  .sectionList {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .workspace {
+    min-height: 0;
+  }
+
+  .sectionEditor {
+    padding: 18px;
+  }
+}

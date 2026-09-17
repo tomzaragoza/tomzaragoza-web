@@ -1,26 +1,20 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { CoursePage } from "../course-page";
-import { coursePages, getCoursePage } from "../course-data";
 import { getCourseAccess } from "@/lib/course-access";
+import { getCourseNavigation, getCoursePageBySlug } from "@/lib/course-content";
+import { CoursePage } from "../course-page";
 
 type CourseRouteProps = {
-  params: Promise<{ slug: string[] }>;
+  params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return coursePages
-    .filter((page) => page.path !== "/x-ads")
-    .map((page) => ({ slug: page.path.replace("/x-ads/", "").split("/") }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: CourseRouteProps): Promise<Metadata> {
   const { slug } = await params;
-  const page = getCoursePage(`/x-ads/${slug.join("/")}`);
+  const page = await getCoursePageBySlug(slug);
 
-  if (!page) {
-    return {};
-  }
+  if (!page) return {};
 
   return {
     title: `${page.title} | X Ads course`,
@@ -36,13 +30,13 @@ export async function generateMetadata({ params }: CourseRouteProps): Promise<Me
 
 export default async function CourseContentPage({ params }: CourseRouteProps) {
   const { slug } = await params;
-  const page = getCoursePage(`/x-ads/${slug.join("/")}`);
+  const [page, navigation, access] = await Promise.all([
+    getCoursePageBySlug(slug),
+    getCourseNavigation(),
+    getCourseAccess()
+  ]);
 
-  if (!page) {
-    notFound();
-  }
+  if (!page || page.slug === "introduction") notFound();
 
-  const access = await getCourseAccess();
-
-  return <CoursePage page={page} access={access} />;
+  return <CoursePage page={page} access={access} navigation={navigation} />;
 }

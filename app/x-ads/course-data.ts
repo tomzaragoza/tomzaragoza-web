@@ -1,36 +1,6 @@
-export type CourseContentSection = {
-  heading?: string;
-  paragraphs?: readonly (
-    | string
-    | {
-        content: readonly (
-          | string
-          | { label: string; href: string; external?: boolean }
-        )[];
-      }
-  )[];
-  items?: readonly string[];
-  steps?: readonly string[];
-  links?: readonly { label: string; href: string }[];
-  note?: string;
-  image?: {
-    src: string;
-    alt: string;
-    width: number;
-    height: number;
-    caption: string;
-    source: string;
-    wide?: boolean;
-  };
-};
+import type { CoursePageDefinition } from "@/lib/course-content-shared";
 
-export type CoursePageDefinition = {
-  path: string;
-  title: string;
-  description: string;
-  outcome?: string;
-  content: readonly CourseContentSection[];
-};
+export type { CourseContentSection, CoursePageDefinition } from "@/lib/course-content-shared";
 
 export const courseNavigation = [
   { title: "Introduction", path: "/x-ads" },

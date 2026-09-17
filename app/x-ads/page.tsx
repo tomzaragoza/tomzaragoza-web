@@ -1,20 +1,25 @@
 import { CoursePage } from "./course-page";
-import { getCoursePage } from "./course-data";
 import { getCourseAccess } from "@/lib/course-access";
+import { getCourseNavigation, getCoursePageBySlug } from "@/lib/course-content";
+
+export const dynamic = "force-dynamic";
 
 export default async function IntroductionPage() {
-  const page = getCoursePage("/x-ads");
+  const [page, navigation, access] = await Promise.all([
+    getCoursePageBySlug("introduction"),
+    getCourseNavigation(),
+    getCourseAccess()
+  ]);
 
   if (!page) {
     return null;
   }
 
-  const access = await getCourseAccess();
-
   return (
     <CoursePage
       page={page}
       access={access === "signed-out" ? "public" : access}
+      navigation={navigation}
     />
   );
 }

@@ -4,10 +4,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AuthControls } from "@/app/components/auth-controls";
-import { courseNavigation } from "./course-data";
+import type { CourseNavigationItem } from "@/lib/course-content-shared";
 import styles from "./x-ads.module.css";
 
-export function MobileCourseNav({ currentPath }: { currentPath: string }) {
+export function MobileCourseNav({
+  currentPath,
+  navigation
+}: {
+  currentPath: string;
+  navigation: readonly CourseNavigationItem[];
+}) {
   const [open, setOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -138,7 +144,7 @@ export function MobileCourseNav({ currentPath }: { currentPath: string }) {
 
         <nav className={styles.mobilePanelNav} aria-label="Course navigation">
           <div className={styles.mobileContents}>
-            {courseNavigation.map((item, index) => (
+            {navigation.map((item, index) => (
               <Link
                 className={currentPath === item.path ? styles.mobileActiveLink : ""}
                 href={item.path}

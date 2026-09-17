@@ -3,7 +3,8 @@ import Link from "next/link";
 import { ChartNoAxesCombined, Eye, MousePointer2, Target } from "lucide-react";
 import { AuthControls } from "@/app/components/auth-controls";
 import type { CourseAccess } from "@/lib/course-access";
-import { courseNavigation, coursePages, type CoursePageDefinition } from "./course-data";
+import type { CourseNavigationItem, CoursePageDefinition } from "@/lib/course-content-shared";
+import { CourseVideo } from "./course-video";
 import { MobileCourseNav } from "./mobile-course-nav";
 import styles from "./x-ads.module.css";
 
@@ -113,10 +114,12 @@ function CourseAccessGate({
 
 export function CoursePage({
   page,
-  access
+  access,
+  navigation
 }: {
   page: CoursePageDefinition;
   access: CoursePageAccess;
+  navigation: readonly CourseNavigationItem[];
 }) {
   const isIntroduction = page.path === "/x-ads";
   const isPrinciples = page.path === "/x-ads/principles";
@@ -127,7 +130,7 @@ export function CoursePage({
         Skip to course content
       </a>
 
-      <MobileCourseNav currentPath={page.path} />
+      <MobileCourseNav currentPath={page.path} navigation={navigation} />
 
       <div className={styles.courseShell}>
         <aside className={styles.sidebar} aria-label="Course navigation">
@@ -162,7 +165,7 @@ export function CoursePage({
             </div>
 
             <nav className={styles.contents} aria-label="Course contents">
-              {courseNavigation.map((item, index) => (
+              {navigation.map((item, index) => (
                 <div className={styles.navGroup} key={item.path}>
                   <Link
                     className={`${styles.parentLink} ${
@@ -260,9 +263,9 @@ export function CoursePage({
                 )}
                 <section className={styles.curriculum} aria-labelledby="curriculum-title">
                   <h2 id="curriculum-title">Inside the course</h2>
-                  <p>{courseNavigation.length - 1} chapters to help you prepare, launch, and improve your campaigns.</p>
+                  <p>{navigation.length - 1} chapters to help you prepare, launch, and improve your campaigns.</p>
                   <ol className={styles.chapterList}>
-                    {courseNavigation.slice(1).map((chapter, index) => (
+                    {navigation.slice(1).map((chapter, index) => (
                       <li key={chapter.path}>
                         <Link className={styles.chapterLink} href={chapter.path}>
                           <span className={styles.chapterNumber} aria-hidden="true">
@@ -270,7 +273,7 @@ export function CoursePage({
                           </span>
                           <div>
                             <h3>{chapter.title}</h3>
-                            <p>{coursePages.find((item) => item.path === chapter.path)?.description}</p>
+                            <p>{chapter.description}</p>
                           </div>
                           <span aria-hidden="true">→</span>
                         </Link>
@@ -284,7 +287,7 @@ export function CoursePage({
                   {page.content.map((section, index) => (
                     <section
                       className={`${styles.contentSection} ${isPrinciples ? styles.principleSection : ""}`}
-                      key={index}
+                      key={section.id ?? index}
                     >
                       {section.heading ? (
                         isPrinciples ? (
@@ -314,6 +317,7 @@ export function CoursePage({
                               )}
                         </p>
                       ))}
+                      {section.video ? <CourseVideo video={section.video} /> : null}
                       {section.steps ? (
                         <ol className={styles.setupSteps}>
                           {section.steps.map((step) => <li key={step}>{step}</li>)}

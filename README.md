@@ -104,6 +104,20 @@ TOMZARAGOZA_ADMIN_TOKEN=dev-admin-token
 
 In production, set both env vars explicitly.
 
+## Course editor
+
+Open `/admin/course` and enter `TOMZARAGOZA_ADMIN_TOKEN`. Select a course page,
+then select a section. The editor can update section headings and paragraphs,
+add or remove sections, and attach one video to each section.
+
+Video sources can be YouTube, Vimeo, Loom, or a direct HTTPS MP4 or WebM file.
+An optional HTTPS WebVTT caption file can be attached to a direct video. The
+editor stores course pages in the MongoDB `x_ads_course_pages` collection.
+
+Each lesson uses one route: `/x-ads/<slug>`. All lesson content stays in sections
+on that route. The application seeds the current course pages on first use and
+does not overwrite later editor changes.
+
 ## Endpoint Builder
 
 Open `/admin`, enter the admin token, and edit the text-backed MCP tools. The builder writes to `content/endpoints.json`.

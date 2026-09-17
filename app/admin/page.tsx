@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { authHint } from "@/lib/auth";
 import { EndpointBuilder } from "./endpoint-builder";
 
@@ -8,6 +9,7 @@ export default function AdminPage() {
         <div className="admin-header">
           <p>tomzaragoza-web</p>
           <h1 id="builder-title">Endpoint builder</h1>
+          <Link href="/admin/course">Open course editor →</Link>
         </div>
         <EndpointBuilder authHint={authHint()} />
       </section>

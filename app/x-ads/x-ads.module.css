@@ -897,6 +897,34 @@
   width: min(100%, 30rem);
 }
 
+.lessonVideo {
+  width: min(100%, 40rem);
+  margin: 28px 0 0;
+}
+
+.lessonVideoFrame {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--course-line);
+  border-radius: 8px;
+  background: #0f0f0e;
+}
+
+.lessonVideoFrame iframe,
+.lessonVideoFrame video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.lessonVideo figcaption {
+  margin-top: 10px;
+  color: var(--course-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
 .lessonFigure img {
   display: block;
   width: 100%;
