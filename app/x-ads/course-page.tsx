@@ -9,6 +9,60 @@ import styles from "./x-ads.module.css";
 
 type CoursePageAccess = CourseAccess | "public";
 
+function PrincipleAnimation({ index }: { index: number }) {
+  if (index === 0) {
+    return (
+      <div className={`${styles.principleVisual} ${styles.engineVisual}`} aria-hidden="true">
+        <span className={`${styles.signalDot} ${styles.signalDotOne}`} />
+        <span className={`${styles.signalDot} ${styles.signalDotTwo}`} />
+        <span className={`${styles.signalDot} ${styles.signalDotThree}`} />
+        <span className={styles.signalHub} />
+        <span className={styles.signalResult} />
+      </div>
+    );
+  }
+
+  if (index === 1) {
+    return (
+      <div className={`${styles.principleVisual} ${styles.pixelVisual}`} aria-hidden="true">
+        <div className={styles.pixelGrid}>
+          {Array.from({ length: 12 }, (_, pixelIndex) => <span key={pixelIndex} />)}
+        </div>
+      </div>
+    );
+  }
+
+  if (index === 2) {
+    return (
+      <div className={`${styles.principleVisual} ${styles.nativeVisual}`} aria-hidden="true">
+        <div className={`${styles.miniPost} ${styles.adPost}`}><span /><span /><span /></div>
+        <div className={`${styles.miniPost} ${styles.nativePost}`}><span /><span /><span /></div>
+      </div>
+    );
+  }
+
+  if (index === 3) {
+    return (
+      <div className={`${styles.principleVisual} ${styles.demoVisual}`} aria-hidden="true">
+        <span className={styles.demoTrack} />
+        <span className={styles.demoProduct} />
+        <span className={styles.demoResult} />
+      </div>
+    );
+  }
+
+  return (
+    <div className={`${styles.principleVisual} ${styles.feedVisual}`} aria-hidden="true">
+      <div className={styles.miniFeed}>
+        <div><span /><span /></div>
+        <div><span /><span /></div>
+        <div><span /><span /></div>
+        <div><span /><span /></div>
+      </div>
+    </div>
+  );
+}
+
 function PresaleCheckout({
   returnPath,
   label = "Unlock the course — $20"
@@ -65,6 +119,7 @@ export function CoursePage({
   access: CoursePageAccess;
 }) {
   const isIntroduction = page.path === "/x-ads";
+  const isPrinciples = page.path === "/x-ads/principles";
 
   return (
     <main className={styles.page}>
@@ -224,8 +279,18 @@ export function CoursePage({
             ) : access === "full" ? (
                 <div className={styles.lessonContent}>
                   {page.content.map((section, index) => (
-                    <section className={styles.contentSection} key={index}>
-                      {section.heading ? <h2>{section.heading}</h2> : null}
+                    <section
+                      className={`${styles.contentSection} ${isPrinciples ? styles.principleSection : ""}`}
+                      key={index}
+                    >
+                      {section.heading ? (
+                        isPrinciples ? (
+                          <div className={styles.principleHeader}>
+                            <h2>{section.heading}</h2>
+                            <PrincipleAnimation index={index} />
+                          </div>
+                        ) : <h2>{section.heading}</h2>
+                      ) : null}
                       {section.paragraphs?.map((paragraph, paragraphIndex) => (
                         <p key={paragraphIndex}>
                           {typeof paragraph === "string"

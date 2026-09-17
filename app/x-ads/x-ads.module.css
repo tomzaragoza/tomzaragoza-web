@@ -350,7 +350,9 @@
 }
 
 .salesCopy > .presaleButton {
-  margin-top: 24px;
+  display: flex;
+  width: fit-content;
+  margin: 24px 0 32px;
 }
 
 .curriculum h2 {
@@ -524,7 +526,287 @@
   margin: 0 0 22px;
   color: var(--course-text);
   font-size: 17px;
-  font-weight: 400;
+  font-weight: 500;
+}
+
+.principleSection + .principleSection {
+  margin-top: 72px;
+}
+
+.principleHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 132px;
+  gap: 32px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.principleHeader h2 {
+  margin: 0;
+}
+
+.principleVisual {
+  position: relative;
+  width: 132px;
+  height: 76px;
+  overflow: hidden;
+  border: 1px solid var(--course-line);
+  border-radius: 8px;
+  background: #1b1b19;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 3%);
+}
+
+.engineVisual::before {
+  position: absolute;
+  top: 37px;
+  right: 18px;
+  left: 18px;
+  height: 1px;
+  background: var(--course-line);
+  content: "";
+}
+
+.signalDot,
+.signalHub,
+.signalResult {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+}
+
+.signalDot {
+  left: 17px;
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--course-muted);
+  background: #1b1b19;
+}
+
+.signalDotOne { top: 18px; }
+.signalDotTwo { top: 34px; }
+.signalDotThree { top: 50px; }
+
+.signalHub {
+  top: 31px;
+  left: 59px;
+  width: 13px;
+  height: 13px;
+  border: 1px solid #36a58c;
+  background: #007f66;
+}
+
+.signalResult {
+  top: 33px;
+  right: 18px;
+  width: 9px;
+  height: 9px;
+  background: var(--course-text);
+}
+
+.pixelVisual {
+  display: grid;
+  place-items: center;
+}
+
+.pixelGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 12px);
+  gap: 5px;
+}
+
+.pixelGrid span {
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--course-line);
+  border-radius: 2px;
+  background: #20201d;
+}
+
+.pixelGrid span:nth-child(2),
+.pixelGrid span:nth-child(7),
+.pixelGrid span:nth-child(12) {
+  border-color: #36a58c;
+  background: #007f66;
+}
+
+.miniPost {
+  position: absolute;
+  width: 72px;
+  height: 46px;
+  border: 1px solid var(--course-line);
+  border-radius: 6px;
+  padding: 10px;
+  background: #20201d;
+}
+
+.miniPost span {
+  display: block;
+  height: 2px;
+  margin-bottom: 6px;
+  background: var(--course-faint);
+}
+
+.miniPost span:nth-child(2) { width: 78%; }
+.miniPost span:nth-child(3) { width: 44%; }
+
+.adPost {
+  top: 15px;
+  left: 14px;
+  opacity: 0.38;
+  transform: rotate(-5deg);
+}
+
+.nativePost {
+  top: 15px;
+  right: 14px;
+  border-color: #277864;
+  box-shadow: 0 5px 16px rgb(0 0 0 / 18%);
+}
+
+.nativePost span:first-child {
+  background: #36a58c;
+}
+
+.demoTrack {
+  position: absolute;
+  top: 37px;
+  right: 22px;
+  left: 22px;
+  height: 1px;
+  background: var(--course-line);
+}
+
+.demoProduct,
+.demoResult {
+  position: absolute;
+  display: block;
+}
+
+.demoProduct {
+  top: 27px;
+  left: 23px;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #36a58c;
+  border-radius: 4px;
+  background: #007f66;
+  box-shadow: 0 3px 8px rgb(0 0 0 / 20%);
+}
+
+.demoResult {
+  top: 25px;
+  right: 21px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--course-muted);
+  border-radius: 50%;
+}
+
+.feedVisual {
+  padding: 10px 15px;
+}
+
+.miniFeed {
+  display: grid;
+  gap: 6px;
+}
+
+.miniFeed > div {
+  height: 24px;
+  border: 1px solid var(--course-line);
+  border-radius: 5px;
+  padding: 6px 8px;
+  background: #20201d;
+}
+
+.miniFeed span {
+  display: block;
+  width: 76%;
+  height: 2px;
+  margin-bottom: 5px;
+  background: var(--course-faint);
+}
+
+.miniFeed span:last-child {
+  width: 48%;
+  background: #277864;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .signalDot {
+    animation: signalIn 3.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+
+  .signalDotTwo { animation-delay: 120ms; }
+  .signalDotThree { animation-delay: 240ms; }
+  .signalHub { animation: quietPulse 3.6s ease-in-out infinite; }
+  .signalResult { animation: resultOut 3.6s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+
+  .pixelGrid span:nth-child(2),
+  .pixelGrid span:nth-child(7),
+  .pixelGrid span:nth-child(12) {
+    animation: pixelPulse 3s ease-in-out infinite;
+  }
+
+  .pixelGrid span:nth-child(7) { animation-delay: 500ms; }
+  .pixelGrid span:nth-child(12) { animation-delay: 1s; }
+
+  .adPost { animation: adLeaves 4.8s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+  .nativePost { animation: postSettles 4.8s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+  .demoProduct { animation: productDemo 4s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+  .demoResult { animation: resultPulse 4s ease-in-out infinite; }
+  .miniFeed { animation: feedAdvance 5s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+}
+
+@keyframes signalIn {
+  0%, 12% { opacity: 0.25; transform: translateX(0); }
+  48%, 68% { opacity: 1; transform: translateX(41px); }
+  82%, 100% { opacity: 0; transform: translateX(41px); }
+}
+
+@keyframes quietPulse {
+  0%, 38%, 100% { opacity: 0.72; transform: scale(0.9); }
+  52%, 72% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes resultOut {
+  0%, 48% { opacity: 0; transform: translateX(-11px) scale(0.7); }
+  68%, 84% { opacity: 1; transform: translateX(0) scale(1); }
+  100% { opacity: 0; transform: translateX(5px) scale(0.85); }
+}
+
+@keyframes pixelPulse {
+  0%, 24%, 100% { opacity: 0.35; transform: scale(0.82); }
+  42%, 62% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes adLeaves {
+  0%, 22% { opacity: 0.38; transform: translateX(0) rotate(-5deg); }
+  52%, 82% { opacity: 0; transform: translateX(-18px) rotate(-8deg); }
+  100% { opacity: 0.38; transform: translateX(0) rotate(-5deg); }
+}
+
+@keyframes postSettles {
+  0%, 22% { transform: translateX(0) scale(0.94); }
+  52%, 82% { transform: translateX(-15px) scale(1); }
+  100% { transform: translateX(0) scale(0.94); }
+}
+
+@keyframes productDemo {
+  0%, 18% { transform: translateX(0) rotate(0); }
+  56%, 78% { transform: translateX(63px) rotate(90deg); }
+  100% { transform: translateX(0) rotate(0); }
+}
+
+@keyframes resultPulse {
+  0%, 48%, 100% { opacity: 0.35; transform: scale(0.8); }
+  62%, 82% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes feedAdvance {
+  0%, 24% { transform: translateY(0); }
+  42%, 68% { transform: translateY(-30px); }
+  84%, 100% { transform: translateY(-60px); }
 }
 
 .contentSection p {
@@ -847,6 +1129,11 @@
 
   .salesCopy {
     padding-bottom: 48px;
+  }
+
+  .principleHeader {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
 }
