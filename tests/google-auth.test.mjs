@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { randomBytes } from "node:crypto";
 import { getGoogleAuth } from "../lib/google-auth.ts";
+import { isCourseAdminEmail } from "../lib/course-admin-policy.ts";
 import { hasComplimentaryCourseAccess } from "../lib/course-access-policy.ts";
 
 test("complimentary course access uses the configured Google email", () => {
@@ -9,6 +10,13 @@ test("complimentary course access uses the configured Google email", () => {
   assert.equal(hasComplimentaryCourseAccess(" TOMDZARAGOZA@GMAIL.COM "), true);
   assert.equal(hasComplimentaryCourseAccess("someone@example.com"), false);
   assert.equal(hasComplimentaryCourseAccess(null), false);
+});
+
+test("course administration is limited to Tom's Google email", () => {
+  assert.equal(isCourseAdminEmail("tomdzaragoza@gmail.com"), true);
+  assert.equal(isCourseAdminEmail(" TOMDZARAGOZA@GMAIL.COM "), true);
+  assert.equal(isCourseAdminEmail("someone@example.com"), false);
+  assert.equal(isCourseAdminEmail(null), false);
 });
 
 test("Google sign-in rejects unsafe requests without connecting to MongoDB", async (t) => {

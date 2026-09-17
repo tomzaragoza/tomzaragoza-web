@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getCourseAccess } from "@/lib/course-access";
+import { getCourseAdminAccess } from "@/lib/course-admin";
 import { getCourseNavigation, getCoursePageBySlug } from "@/lib/course-content";
 import { CoursePage } from "../course-page";
 
@@ -30,13 +31,21 @@ export async function generateMetadata({ params }: CourseRouteProps): Promise<Me
 
 export default async function CourseContentPage({ params }: CourseRouteProps) {
   const { slug } = await params;
-  const [page, navigation, access] = await Promise.all([
+  const [page, navigation, access, adminAccess] = await Promise.all([
     getCoursePageBySlug(slug),
     getCourseNavigation(),
-    getCourseAccess()
+    getCourseAccess(),
+    getCourseAdminAccess()
   ]);
 
   if (!page || page.slug === "introduction") notFound();
 
-  return <CoursePage page={page} access={access} navigation={navigation} />;
+  return (
+    <CoursePage
+      page={page}
+      access={access}
+      navigation={navigation}
+      canEdit={adminAccess.status === "authorized"}
+    />
+  );
 }

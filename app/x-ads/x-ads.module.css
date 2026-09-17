@@ -149,6 +149,18 @@
   padding-top: 24px;
 }
 
+.cmsLink {
+  display: block;
+  margin-bottom: 14px;
+  color: #66cdb5 !important;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.cmsLink:hover {
+  text-decoration: underline;
+}
+
 .navGroup {
   display: grid;
   gap: 4px;
@@ -548,6 +560,210 @@
 }
 
 .contentSection + .contentSection {
+  margin-top: 58px;
+}
+
+.inlineToolbar {
+  position: sticky;
+  top: 12px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 44px;
+  padding: 12px;
+  border: 1px solid #3e5e56;
+  border-radius: 8px;
+  background: rgb(27 27 25 / 96%);
+  box-shadow: 0 10px 32px rgb(0 0 0 / 28%);
+  backdrop-filter: blur(12px);
+}
+
+.inlineToolbar > div,
+.inlineToolbar > div:last-child,
+.inlineActions,
+.inlineFormHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inlineToolbar > div:first-child {
+  align-items: start;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.inlineToolbar strong,
+.inlineFormHeader strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.inlineToolbar span {
+  color: var(--course-muted);
+  font-size: 11px;
+}
+
+.inlineToolbar a,
+.inlineToolbar button,
+.inlineActions button,
+.inlineFormHeader button,
+.inlineParagraphs > button,
+.inlineEmptyState {
+  min-height: 34px;
+  border: 1px solid var(--course-line);
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: var(--course-text);
+  background: #20201d;
+  font: inherit;
+  font-size: 12px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.inlineToolbar button:last-child,
+.inlineActions button:last-child {
+  border-color: #36a58c;
+  background: #007f66;
+}
+
+.inlineToolbar button:disabled,
+.inlineActions button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.inlineEditableHeader,
+.inlineSectionShell {
+  position: relative;
+}
+
+.inlineEditableHeader > button,
+.inlineSectionTrigger {
+  position: absolute;
+  z-index: 2;
+  inset: -14px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0;
+  color: var(--course-text);
+  background: transparent;
+  cursor: pointer;
+}
+
+.inlineEditableHeader > button:hover,
+.inlineEditableHeader > button:focus-visible,
+.inlineSectionTrigger:hover,
+.inlineSectionTrigger:focus-visible {
+  border-color: #36a58c;
+  outline: none;
+}
+
+.inlineEditableHeader > button span,
+.inlineSectionTrigger span {
+  position: absolute;
+  top: -13px;
+  right: 10px;
+  padding: 3px 7px;
+  border-radius: 4px;
+  color: #dff8f1;
+  background: #007f66;
+  font-size: 10px;
+  line-height: 1.4;
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+.inlineEditableHeader > button:hover span,
+.inlineEditableHeader > button:focus-visible span,
+.inlineSectionTrigger:hover span,
+.inlineSectionTrigger:focus-visible span {
+  opacity: 1;
+}
+
+.inlineHeaderForm,
+.inlineSectionForm {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid #3e5e56;
+  border-radius: 8px;
+  background: #1b1b19;
+}
+
+.inlineHeaderForm label,
+.inlineSectionForm label {
+  display: grid;
+  gap: 7px;
+  color: var(--course-muted);
+  font-size: 11px;
+}
+
+.inlineHeaderForm input,
+.inlineHeaderForm textarea,
+.inlineSectionForm input,
+.inlineSectionForm textarea {
+  width: 100%;
+  border: 1px solid var(--course-line);
+  border-radius: 5px;
+  padding: 10px 11px;
+  color: var(--course-text);
+  background: var(--course-background);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.inlineHeaderForm textarea,
+.inlineSectionForm textarea {
+  resize: vertical;
+}
+
+.inlineParagraphs,
+.inlineVideoFields {
+  display: grid;
+  gap: 14px;
+  padding-top: 16px;
+  border-top: 1px solid var(--course-line);
+}
+
+.inlineParagraphs small {
+  color: var(--course-faint);
+}
+
+.inlineParagraphs > button {
+  width: fit-content;
+}
+
+.inlineFormHeader {
+  justify-content: space-between;
+}
+
+.inlineActions {
+  justify-content: flex-end;
+}
+
+.inlineError {
+  margin: 0 0 20px;
+  color: #ffaaa2;
+  font-size: 12px;
+}
+
+.inlineEmptyState {
+  width: 100%;
+  min-height: 180px;
+  border-style: dashed;
+  color: var(--course-muted);
+  background: transparent;
+}
+
+.inlineSectionShell + .inlineSectionShell,
+.inlineSectionShell + .inlineSectionForm,
+.inlineSectionForm + .inlineSectionShell,
+.inlineSectionForm + .inlineSectionForm {
   margin-top: 58px;
 }
 
@@ -1199,6 +1415,27 @@
   .principleHeader {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+
+  .inlineToolbar,
+  .inlineToolbar > div:last-child {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .inlineToolbar {
+    top: 8px;
+  }
+
+  .inlineToolbar a,
+  .inlineToolbar button {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .inlineHeaderForm,
+  .inlineSectionForm {
+    padding: 16px;
   }
 
 }

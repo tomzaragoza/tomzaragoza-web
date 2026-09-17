@@ -93,7 +93,8 @@ Authorization: Bearer <TOMZARAGOZA_MCP_TOKEN>
 x-api-key: <TOMZARAGOZA_MCP_TOKEN>
 ```
 
-Admin CMS access uses `TOMZARAGOZA_ADMIN_TOKEN`.
+The endpoint builder API uses `TOMZARAGOZA_ADMIN_TOKEN`. Admin pages also require
+the authorized Google account.
 
 Local development defaults:
 
@@ -106,9 +107,12 @@ In production, set both env vars explicitly.
 
 ## Course editor
 
-Open `/admin/course` and enter `TOMZARAGOZA_ADMIN_TOKEN`. Select a course page,
-then select a section. The editor can update section headings and paragraphs,
-add or remove sections, and attach one video to each section.
+Sign in with the authorized Google account, then open `/admin/course`. This page
+creates course pages and lists the current course structure. Open a lesson from
+the list to edit its title, goal, sections, paragraphs, and video in place.
+
+The course editor and its API allow only `tomdzaragoza@gmail.com`. Other signed-in
+accounts cannot open the admin pages or write course content.
 
 Video sources can be YouTube, Vimeo, Loom, or a direct HTTPS MP4 or WebM file.
 An optional HTTPS WebVTT caption file can be attached to a direct video. The

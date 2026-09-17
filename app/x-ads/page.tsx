@@ -1,14 +1,16 @@
 import { CoursePage } from "./course-page";
 import { getCourseAccess } from "@/lib/course-access";
+import { getCourseAdminAccess } from "@/lib/course-admin";
 import { getCourseNavigation, getCoursePageBySlug } from "@/lib/course-content";
 
 export const dynamic = "force-dynamic";
 
 export default async function IntroductionPage() {
-  const [page, navigation, access] = await Promise.all([
+  const [page, navigation, access, adminAccess] = await Promise.all([
     getCoursePageBySlug("introduction"),
     getCourseNavigation(),
-    getCourseAccess()
+    getCourseAccess(),
+    getCourseAdminAccess()
   ]);
 
   if (!page) {
@@ -20,6 +22,7 @@ export default async function IntroductionPage() {
       page={page}
       access={access === "signed-out" ? "public" : access}
       navigation={navigation}
+      canEdit={adminAccess.status === "authorized"}
     />
   );
 }

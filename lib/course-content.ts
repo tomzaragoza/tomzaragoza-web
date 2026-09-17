@@ -63,6 +63,28 @@ const coursePageSchema = z.object({
   content: z.array(sectionSchema).max(50)
 });
 
+const newCoursePageSchema = coursePageSchema.pick({
+  slug: true,
+  title: true,
+  description: true,
+  outcome: true
+}).refine((page) => page.slug !== "introduction", {
+  message: "The introduction slug is reserved.",
+  path: ["slug"]
+});
+
+const coursePageDetailsSchema = coursePageSchema.pick({
+  slug: true,
+  title: true,
+  description: true,
+  outcome: true
+});
+
+const coursePageContentSchema = coursePageSchema.pick({
+  slug: true,
+  content: true
+});
+
 type CoursePageInput = z.infer<typeof coursePageSchema>;
 
 type CoursePageDocument = CoursePageInput & {
@@ -216,6 +238,78 @@ export async function saveCoursePage(value: unknown) {
   const document: CoursePageDocument = {
     ...input,
     order: existing.order,
+    updatedAt: new Date()
+  };
+
+  await collection.replaceOne({ slug: input.slug }, document);
+  return toCoursePageRecord(document);
+}
+
+export async function createCoursePage(value: unknown) {
+  const input = newCoursePageSchema.parse(value);
+  const collection = getCourseCollection();
+
+  if (!collection) {
+    throw new Error("Course database is not configured.");
+  }
+
+  await ensureCourseSeeded(collection);
+
+  if (await collection.findOne({ slug: input.slug })) {
+    throw new Error("A course page already uses this slug.");
+  }
+
+  const lastPage = await collection.findOne({}, {
+    sort: { order: -1 },
+    projection: { order: 1 }
+  });
+  const document: CoursePageDocument = {
+    ...input,
+    content: [],
+    order: (lastPage?.order ?? -1) + 1,
+    updatedAt: new Date()
+  };
+
+  await collection.insertOne(document);
+  return toCoursePageRecord(document);
+}
+
+async function getExistingCourseDocument(slug: string) {
+  const collection = getCourseCollection();
+
+  if (!collection) {
+    throw new Error("Course database is not configured.");
+  }
+
+  await ensureCourseSeeded(collection);
+  const existing = await collection.findOne({ slug });
+
+  if (!existing) {
+    throw new Error("Unknown course page.");
+  }
+
+  return { collection, existing };
+}
+
+export async function updateCoursePageDetails(value: unknown) {
+  const input = coursePageDetailsSchema.parse(value);
+  const { collection, existing } = await getExistingCourseDocument(input.slug);
+  const document: CoursePageDocument = {
+    ...existing,
+    ...input,
+    updatedAt: new Date()
+  };
+
+  await collection.replaceOne({ slug: input.slug }, document);
+  return toCoursePageRecord(document);
+}
+
+export async function updateCoursePageContent(value: unknown) {
+  const input = coursePageContentSchema.parse(value);
+  const { collection, existing } = await getExistingCourseDocument(input.slug);
+  const document: CoursePageDocument = {
+    ...existing,
+    content: input.content,
     updatedAt: new Date()
   };
 
