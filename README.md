@@ -38,7 +38,7 @@ subject to the project's geographic data settings.
 ### Course pricing and checkout
 
 The Course presale price is $20 USD, reduced from $49 USD. The Pro presale
-price is $99 USD, reduced from $149 USD. The presale ends on September 30,
+price is $99 USD, reduced from $198 USD. The presale ends on September 30,
 2026 at 12:00 a.m. Eastern Time. The server changes both Checkout prices to
 their regular amounts at that time. Both plans use fixed USD prices in every
 region. The previous PostHog regional pricing flag is not used for this offer.

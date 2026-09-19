@@ -15,7 +15,7 @@ test("both plans change from presale to regular price at midnight ET on Septembe
 
   assert.equal(isXAdsPresaleActive(xAdsPresaleEndsAt), false);
   assert.equal(getXAdsPrice("course", xAdsPresaleEndsAt), 4900);
-  assert.equal(getXAdsPrice("pro", xAdsPresaleEndsAt), 14900);
+  assert.equal(getXAdsPrice("pro", xAdsPresaleEndsAt), 19800);
   assert.equal(getXAdsRegularPrice("course"), 4900);
-  assert.equal(getXAdsRegularPrice("pro"), 14900);
+  assert.equal(getXAdsRegularPrice("pro"), 19800);
 });

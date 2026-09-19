@@ -5,7 +5,7 @@ export const xAdsPresaleEndsAt = Date.parse("2026-09-30T04:00:00.000Z");
 
 const prices = {
   course: { presale: 2000, regular: 4900 },
-  pro: { presale: 9900, regular: 14900 }
+  pro: { presale: 9900, regular: 19800 }
 } as const;
 
 export function isXAdsPresaleActive(now: number) {
