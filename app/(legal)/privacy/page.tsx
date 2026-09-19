@@ -67,8 +67,10 @@ export default function PrivacyPage() {
       <p>
         The X Pixel sends page visits, buy-button submissions, and confirmed
         purchases to X to measure advertising results. A buy-button event
-        includes the selected plan and price. A purchase event does not include
-        payment amount, currency, or email address.
+        includes the selected plan and price. A purchase event includes your
+        checkout email address, payment amount, currency, and a purchase event
+        identifier. X uses these details to measure purchases. The X Pixel
+        hashes the email address before it sends the event to X.
       </p>
 
       <h2>How information is used</h2>

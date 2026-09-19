@@ -61,7 +61,7 @@ export async function POST(request: Request) {
         },
         quantity: 1
       }],
-      success_url: `${requestUrl.origin}/x-ads/checkout-complete?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${requestUrl.origin}/api/stripe/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${requestUrl.origin}${returnPath}`,
       integration_identifier: "x_ads_presale_kxvtrmqa",
       metadata: {

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { paidXAdsPurchaseFromCheckout } from "../lib/stripe-course-purchase.ts";
+import { getXAdsPurchasePixelData } from "../lib/x-ads-purchase-pixel.ts";
 
 function checkoutSession(overrides = {}) {
   return {
@@ -41,6 +42,18 @@ test("guest Checkout Sessions record a paid purchase by email", () => {
   assert.equal(purchase?.userId, null);
   assert.equal(purchase?.email, "guest@example.com");
   assert.equal(purchase?.tier, "pro");
+});
+
+test("a paid purchase supplies email and value to the X event without exposing its Stripe ID", () => {
+  const purchase = paidXAdsPurchaseFromCheckout(checkoutSession());
+  assert.ok(purchase);
+
+  const data = getXAdsPurchasePixelData(purchase);
+  assert.equal(data.email_address, "buyer@example.com");
+  assert.equal(data.value, 99);
+  assert.equal(data.currency, "USD");
+  assert.match(data.conversion_id, /^[a-f0-9]{64}$/);
+  assert.ok(!JSON.stringify(data).includes(purchase.checkoutSessionId));
 });
 
 test("a paid guest Checkout Session must include an email", () => {

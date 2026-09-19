@@ -51,8 +51,10 @@ lesson discussions. Other customers
 see a purchase confirmation and cannot read lessons yet.
 
 Checkout does not require sign-in. Stripe collects an email address from guest
-buyers. The completion page verifies the paid Checkout Session and stores the
-purchase in MongoDB. The webhook performs the same idempotent update if the
+buyers. Stripe redirects through `/api/stripe/checkout/success`, which places
+the Checkout Session ID in a short-lived HTTP-only cookie and redirects to a
+clean completion URL. The completion page verifies the paid Checkout Session
+and stores the purchase in MongoDB. The webhook performs the same idempotent update if the
 customer closes the browser before returning. A signed-in purchase is linked
 to its account. A guest purchase becomes available to a later Google sign-in
 with the same verified email address. A later Course purchase cannot reduce
@@ -72,9 +74,11 @@ The X Ads base pixel uses ID `o6ml8` on every page. The checkout event uses
 `tw-o6ml8-rfgj8` when a visitor submits any Course or Pro buy button. The purchase event
 uses `tw-o6ml8-rfgj9` on `/x-ads/checkout-complete` after Stripe confirms
 payment. The checkout event includes the selected price and currency. The
-Purchase event uses null value and currency fields. Set the `NEXT_PUBLIC_X_*`
-values before building only if you need
-different IDs. Use X Pixel Helper and Events Manager to verify the live events.
+Purchase event includes the Stripe checkout email, paid amount, currency,
+and a hashed Checkout Session ID as its conversion ID. A browser session sends
+that event once per purchase. Set the `NEXT_PUBLIC_X_*` values before building
+only if you need different IDs. Use X Pixel Helper and Events Manager to verify
+the live events.
 
 To verify a deployment, open the site and navigate to another course page.
 Check for `$pageview` events in the PostHog activity feed. The two events should

@@ -1,6 +1,8 @@
+import { cookies } from "next/headers";
 import Link from "next/link";
 import { fulfillXAdsCheckoutSession } from "@/lib/stripe-course-fulfillment";
 import type { PaidXAdsPurchase } from "@/lib/stripe-course-purchase";
+import { getXAdsPurchasePixelData } from "@/lib/x-ads-purchase-pixel";
 import { PurchasePixelEvent } from "./purchase-pixel-event";
 import styles from "../x-ads.module.css";
 
@@ -11,7 +13,8 @@ export default async function CheckoutCompletePage({
 }: {
   searchParams: Promise<{ session_id?: string }>;
 }) {
-  const { session_id: checkoutSessionId } = await searchParams;
+  const { session_id } = await searchParams;
+  const checkoutSessionId = session_id || (await cookies()).get("x_ads_checkout_session")?.value;
   let purchase: PaidXAdsPurchase | null = null;
 
   if (checkoutSessionId) {
@@ -28,7 +31,7 @@ export default async function CheckoutCompletePage({
         <h1>{purchase ? "Your purchase is confirmed" : "We could not confirm your payment yet"}</h1>
         {purchase ? (
           <>
-            <PurchasePixelEvent />
+            <PurchasePixelEvent data={getXAdsPurchasePixelData(purchase)} />
             <p>
               Your {purchase.tier === "pro" ? "Pro" : "Course"} purchase is recorded.
               The lessons will open when the course launches.
