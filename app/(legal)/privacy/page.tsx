@@ -46,9 +46,9 @@ export default function PrivacyPage() {
           are used to respond to your request.
         </li>
         <li>
-          If you buy the course, Stripe collects your email address and payment
+          If you buy the course, Stripe or PayPal collects your email address and payment
           details. This site records your email address, selected plan, payment
-          amount, currency, and Stripe purchase identifiers. It uses your email
+          amount, currency, and purchase identifiers. It uses your email
           address to connect a guest purchase to a later verified sign-in.
         </li>
       </ul>
@@ -94,7 +94,7 @@ export default function PrivacyPage() {
       <p>
         Google processes information when you use Google sign-in under its own{" "}
         <a href="https://policies.google.com/privacy">privacy policy</a>.
-        {" "}Stripe processes course payments. PostHog processes analytics data through its US Cloud service. See
+        {" "}Stripe and PayPal process course payments. PostHog processes analytics data through its US Cloud service. See
         its <a href="https://posthog.com/privacy">privacy policy</a>.{" "}
         Hosting and database services process information needed to operate the
         site. Depending on their infrastructure, information may be processed

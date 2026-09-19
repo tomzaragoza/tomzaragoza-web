@@ -35,6 +35,8 @@ const plans: Array<{
   }
 ];
 
+type PaymentMethod = "stripe" | "paypal";
+
 function countdownParts(now: number) {
   const seconds = Math.max(0, Math.floor((xAdsPresaleEndsAt - now) / 1000));
   return [
@@ -81,7 +83,7 @@ export function PresaleCheckout({
   compact?: boolean;
 }) {
   const [now, setNow] = useState(initialNow);
-  const [pendingTier, setPendingTier] = useState<PricingTier | null>(null);
+  const [pending, setPending] = useState<{ tier: PricingTier; method: PaymentMethod } | null>(null);
   const [error, setError] = useState("");
   const presale = isXAdsPresaleActive(now);
 
@@ -94,18 +96,18 @@ export function PresaleCheckout({
     };
   }, []);
 
-  async function startCheckout(event: FormEvent<HTMLFormElement>, tier: PricingTier) {
+  async function startCheckout(event: FormEvent<HTMLFormElement>, tier: PricingTier, method: PaymentMethod) {
     event.preventDefault();
-    if (pendingTier) return;
+    if (pending) return;
 
     const displayedAmount = getXAdsPrice(tier, now);
     trackCheckout(tier, displayedAmount);
     const minimumLoadingTime = new Promise<void>((resolve) => window.setTimeout(resolve, 1000));
-    setPendingTier(tier);
+    setPending({ tier, method });
     setError("");
 
     try {
-      const response = await fetch("/api/stripe/checkout", {
+      const response = await fetch(`/api/${method}/checkout`, {
         method: "POST",
         headers: { Accept: "application/json" },
         body: new FormData(event.currentTarget)
@@ -131,31 +133,34 @@ export function PresaleCheckout({
       window.location.assign(result.url);
     } catch (checkoutError) {
       setError(checkoutError instanceof Error ? checkoutError.message : "Checkout is temporarily unavailable.");
-      setPendingTier(null);
+      setPending(null);
     }
   }
 
-  function checkoutForm(tier: PricingTier, compactButton = false) {
+  function checkoutForm(tier: PricingTier, method: PaymentMethod, compactButton = false) {
     const plan = plans.find((item) => item.tier === tier)!;
+    const isPending = pending?.tier === tier && pending.method === method;
     return (
       <form
         className={`${styles.presaleCheckout} ${compactButton ? styles.gateOffer : ""}`}
-        action="/api/stripe/checkout"
+        action={`/api/${method}/checkout`}
         method="post"
-        onSubmit={(event) => void startCheckout(event, tier)}
-        key={tier}
+        onSubmit={(event) => void startCheckout(event, tier, method)}
+        key={`${tier}-${method}`}
       >
         <input type="hidden" name="returnPath" value={returnPath} />
         <input type="hidden" name="pricingTier" value={tier} />
         <button
-          className={`${styles.presaleButton} ${tier === "course" ? styles.courseButton : ""} ${pendingTier === tier ? styles.checkoutPending : ""}`}
+          className={`${styles.presaleButton} ${tier === "course" ? styles.courseButton : ""} ${method === "paypal" ? styles.paypalButton : ""} ${isPending ? styles.checkoutPending : ""}`}
           type="submit"
-          disabled={pendingTier !== null}
-          aria-busy={pendingTier === tier}
+          disabled={pending !== null}
+          aria-busy={isPending}
         >
-          {pendingTier === tier
-            ? "Opening checkout…"
-            : `Buy ${plan.name} · ${formatXAdsPrice(getXAdsPrice(tier, now))}`}
+          {isPending
+            ? `Opening ${method === "paypal" ? "PayPal" : "checkout"}…`
+            : method === "paypal"
+              ? `Pay with PayPal · ${formatXAdsPrice(getXAdsPrice(tier, now))}`
+              : `Buy ${plan.name} · ${formatXAdsPrice(getXAdsPrice(tier, now))}`}
         </button>
       </form>
     );
@@ -165,7 +170,10 @@ export function PresaleCheckout({
     return (
       <>
         <div className={styles.gateOffers} aria-label="Choose a course plan">
-          {plans.filter((plan) => tiers.includes(plan.tier)).map((plan) => checkoutForm(plan.tier, true))}
+          {plans.filter((plan) => tiers.includes(plan.tier)).flatMap((plan) => [
+            checkoutForm(plan.tier, "stripe", true),
+            checkoutForm(plan.tier, "paypal", true)
+          ])}
         </div>
         {error ? <p className={styles.checkoutError} role="alert">{error}</p> : null}
       </>
@@ -215,7 +223,8 @@ export function PresaleCheckout({
             </div>
             <p className={styles.pricingPlanDescription}>{plan.description}</p>
             <ul>{plan.features.map((feature) => <li key={feature}>{feature}</li>)}</ul>
-            {checkoutForm(plan.tier)}
+            {checkoutForm(plan.tier, "stripe")}
+            {checkoutForm(plan.tier, "paypal")}
           </article>
         ))}
       </div>

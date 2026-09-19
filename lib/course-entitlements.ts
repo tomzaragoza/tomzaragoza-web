@@ -15,6 +15,9 @@ type CourseEntitlementDocument = {
 
 type CoursePurchaseDocument = {
   checkoutSessionId: string;
+  provider?: "stripe" | "paypal";
+  paypalCaptureId?: string;
+  revokedAt?: Date;
   userId: string | null;
   email: string;
   tier: PricingTier;
@@ -22,6 +25,11 @@ type CoursePurchaseDocument = {
   amountTotal: number | null;
   currency: string | null;
   purchasedAt: Date;
+};
+
+type RevokedPayPalCaptureDocument = {
+  _id: string;
+  revokedAt: Date;
 };
 
 export type PaidCoursePurchase = Omit<CoursePurchaseDocument, "purchasedAt"> & {
@@ -41,6 +49,7 @@ const globalForCourseEntitlements = globalThis as typeof globalThis & {
 function getCourseCollections(): {
   entitlements: Collection<CourseEntitlementDocument>;
   purchases: Collection<CoursePurchaseDocument>;
+  revokedCaptures: Collection<RevokedPayPalCaptureDocument>;
 } {
   const uri = process.env.MONGODB_URL?.trim();
   if (!uri) throw new Error("Course database is not configured.");
@@ -53,7 +62,8 @@ function getCourseCollections(): {
 
   return {
     entitlements: database.collection<CourseEntitlementDocument>("x_ads_course_entitlements"),
-    purchases: database.collection<CoursePurchaseDocument>("x_ads_course_purchases")
+    purchases: database.collection<CoursePurchaseDocument>("x_ads_course_purchases"),
+    revokedCaptures: database.collection<RevokedPayPalCaptureDocument>("x_ads_paypal_revoked_captures")
   };
 }
 
@@ -66,6 +76,7 @@ async function ensureCourseEntitlementIndexes(
       await Promise.all([
         entitlements.createIndex({ userId: 1 }, { unique: true }),
         purchases.createIndex({ checkoutSessionId: 1 }, { unique: true }),
+        purchases.createIndex({ paypalCaptureId: 1 }, { sparse: true }),
         purchases.createIndex({ userId: 1, purchasedAt: -1 }),
         purchases.createIndex({ email: 1, userId: 1, purchasedAt: -1 })
       ]);
@@ -94,7 +105,7 @@ export async function getPurchasedCourseTier(
   const entitlement = await entitlements.findOne({ userId });
   const email = verifiedEmail?.trim().toLowerCase();
   const guestPurchases = email
-    ? await purchases.find({ userId: null, email }).toArray()
+    ? await purchases.find({ userId: null, email, revokedAt: { $exists: false } }).toArray()
     : [];
   const guestRank = guestPurchases.reduce(
     (rank, purchase) => Math.max(rank, tierRanks[purchase.tier]),
@@ -103,9 +114,11 @@ export async function getPurchasedCourseTier(
   return courseTierFromRank(Math.max(entitlement?.tierRank ?? 0, guestRank));
 }
 
-export async function recordPaidCoursePurchase(input: PaidCoursePurchase): Promise<PricingTier> {
-  const { entitlements, purchases } = getCourseCollections();
+export async function recordPaidCoursePurchase(input: PaidCoursePurchase): Promise<PricingTier | null> {
+  const { entitlements, purchases, revokedCaptures } = getCourseCollections();
   await ensureCourseEntitlementIndexes(entitlements, purchases);
+  if (input.provider === "paypal" && input.paypalCaptureId &&
+      await revokedCaptures.findOne({ _id: input.paypalCaptureId })) return null;
   const purchasedAt = input.purchasedAt ?? new Date();
   await purchases.updateOne(
     { checkoutSessionId: input.checkoutSessionId },
@@ -122,6 +135,13 @@ export async function recordPaidCoursePurchase(input: PaidCoursePurchase): Promi
     recordedPurchase.tier !== input.tier
   ) {
     throw new Error("Checkout Session does not match the recorded purchase.");
+  }
+
+  if (recordedPurchase.revokedAt) return null;
+  if (input.provider === "paypal" && input.paypalCaptureId &&
+      await revokedCaptures.findOne({ _id: input.paypalCaptureId })) {
+    await revokePayPalCoursePurchase(input.paypalCaptureId);
+    return null;
   }
 
   if (!input.userId) return input.tier;
@@ -143,4 +163,28 @@ export async function recordPaidCoursePurchase(input: PaidCoursePurchase): Promi
   );
 
   return input.tier;
+}
+
+export async function revokePayPalCoursePurchase(captureId: string): Promise<void> {
+  const { entitlements, purchases, revokedCaptures } = getCourseCollections();
+  await ensureCourseEntitlementIndexes(entitlements, purchases);
+  await revokedCaptures.updateOne(
+    { _id: captureId },
+    { $setOnInsert: { revokedAt: new Date() } },
+    { upsert: true }
+  );
+  const purchase = await purchases.findOneAndUpdate(
+    { provider: "paypal", paypalCaptureId: captureId, revokedAt: { $exists: false } },
+    { $set: { revokedAt: new Date() } },
+    { returnDocument: "after" }
+  );
+  if (!purchase?.userId) return;
+  const active = await purchases.find({
+    userId: purchase.userId,
+    revokedAt: { $exists: false }
+  }).toArray();
+  const rank = active.reduce((value, item) => Math.max(value, tierRanks[item.tier]), 0);
+  await entitlements.updateOne({ userId: purchase.userId }, {
+    $set: { tierRank: rank, updatedAt: new Date() }
+  });
 }

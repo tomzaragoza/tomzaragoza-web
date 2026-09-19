@@ -1101,6 +1101,10 @@
   margin-top: auto;
 }
 
+.pricingPlan .presaleCheckout + .presaleCheckout {
+  margin-top: 8px;
+}
+
 .comingSoon {
   position: relative;
   width: min(100%, 38rem);
@@ -1161,6 +1165,18 @@
 .courseButton:hover:not(:disabled) {
   border-color: #74746b;
   background: #282824;
+}
+
+.paypalButton {
+  border-color: #ffc439;
+  color: #1a2c52;
+  background: #ffc439;
+  box-shadow: none;
+}
+
+.paypalButton:hover:not(:disabled) {
+  border-color: #f2b72e;
+  background: #f2b72e;
 }
 
 .comingSoon .presaleCheckout {
