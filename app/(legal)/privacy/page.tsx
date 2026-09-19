@@ -58,6 +58,11 @@ export default function PrivacyPage() {
         identity after sign-out. Session recording is disabled, and captured
         element text and attributes are masked.
       </p>
+      <p>
+        The X Pixel sends page visits, buy-button submissions, and confirmed
+        purchases to X to measure advertising results. The purchase event does
+        not include payment amount, currency, or email address.
+      </p>
 
       <h2>How information is used</h2>
       <p>

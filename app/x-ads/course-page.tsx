@@ -7,26 +7,10 @@ import type { CourseNavigationItem, CoursePageRecord } from "@/lib/course-conten
 import { CourseSectionContent } from "./course-section";
 import { InlineCourseEditor, InlineCourseHeader } from "./inline-course-editor";
 import { MobileCourseNav } from "./mobile-course-nav";
+import { PresaleCheckout } from "./presale-checkout";
 import styles from "./x-ads.module.css";
 
 type CoursePageAccess = CourseAccess | "public";
-
-function PresaleCheckout({
-  returnPath,
-  label = "Unlock the course — $20"
-}: {
-  returnPath: string;
-  label?: string;
-}) {
-  return (
-    <form className={styles.presaleCheckout} action="/api/stripe/checkout" method="post">
-      <input type="hidden" name="returnPath" value={returnPath} />
-      <button className={styles.presaleButton} type="submit">
-        {label}
-      </button>
-    </form>
-  );
-}
 
 function CourseAccessGate({
   access,
