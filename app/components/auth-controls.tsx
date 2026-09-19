@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import styles from "./auth-controls.module.css";
@@ -9,13 +11,54 @@ function subscribeToHydration() {
   return () => {};
 }
 
-export function AuthControls() {
+export function AuthControls({
+  signInOnly = false,
+  courseAccount = false,
+  adminMessages = false,
+  showMessages = true,
+  returnPath
+}: {
+  signInOnly?: boolean;
+  courseAccount?: boolean;
+  adminMessages?: boolean;
+  showMessages?: boolean;
+  returnPath?: string;
+}) {
   const pathname = usePathname();
   const { data: session, isPending, error: sessionError } = authClient.useSession();
   const mounted = useSyncExternalStore(subscribeToHydration, () => true, () => false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [messageCount, setMessageCount] = useState<number | null>(null);
   const checkingSession = !mounted || isPending;
+  const sessionUserId = session?.user.id;
+
+  useEffect(() => {
+    if (!courseAccount || !showMessages || !sessionUserId) return;
+
+    const controller = new AbortController();
+    const query = adminMessages ? "?scope=admin" : "";
+    fetch(`/api/course/message-summary${query}`, { signal: controller.signal })
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error ?? "Unable to load messages.");
+        setMessageCount(payload.count as number);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setMessageCount(null);
+      });
+
+    return () => controller.abort();
+  }, [adminMessages, courseAccount, sessionUserId, showMessages]);
+
+  useEffect(() => {
+    if (!courseAccount || !showMessages) return;
+    const handleMessageRead = () => setMessageCount((current) =>
+      current === null ? null : Math.max(0, current - 1)
+    );
+    window.addEventListener("course-message-read", handleMessageRead);
+    return () => window.removeEventListener("course-message-read", handleMessageRead);
+  }, [courseAccount, showMessages]);
 
   async function signIn() {
     setBusy(true);
@@ -24,8 +67,8 @@ export function AuthControls() {
     try {
       const result = await authClient.signIn.social({
         provider: "google",
-        callbackURL: pathname === "/sign-in" ? "/x-ads" : pathname,
-        errorCallbackURL: "/sign-in?error=google"
+        callbackURL: returnPath ?? (pathname === "/sign-in" ? "/x-ads" : pathname),
+        errorCallbackURL: "/login?error=google"
       });
 
       if (result.error) {
@@ -44,7 +87,12 @@ export function AuthControls() {
 
     try {
       const result = await authClient.signOut();
-      if (result.error) setError("Could not sign out. Please try again.");
+      if (result.error) {
+        setError("Could not sign out. Please try again.");
+        return;
+      }
+
+      window.location.reload();
     } catch {
       setError("Could not sign out. Please try again.");
     } finally {
@@ -55,12 +103,58 @@ export function AuthControls() {
   return (
     <div className={styles.controls}>
       {session ? (
-        <>
-          <p className={styles.identity}>Signed in as {session.user.name || session.user.email}</p>
-          <button className={styles.button} onClick={signOut} disabled={busy}>
-            {busy ? "Signing out…" : "Sign out"}
-          </button>
-        </>
+        signInOnly ? null : (
+          courseAccount ? (
+            <>
+              <div className={styles.profile}>
+                <div className={styles.profileAvatar} aria-hidden="true">
+                  {session.user.image ? (
+                    <Image
+                      src={session.user.image}
+                      width={34}
+                      height={34}
+                      alt=""
+                      unoptimized
+                    />
+                  ) : (
+                    <span>{Array.from((session.user.name || session.user.email).trim())[0]?.toUpperCase()}</span>
+                  )}
+                </div>
+                <div>
+                  <strong>{session.user.name || "Course customer"}</strong>
+                  <span>{session.user.email}</span>
+                </div>
+              </div>
+              <div className={styles.accountLinks}>
+                {showMessages ? (
+                  <Link
+                    className={pathname.includes("/messages") ? styles.activeAccountLink : ""}
+                    href={adminMessages ? "/admin/course/messages" : "/x-ads/messages"}
+                  >
+                    <span
+                      className={`${styles.messageDot} ${
+                        messageCount && messageCount > 0 ? styles.messageDotVisible : ""
+                      }`}
+                      aria-hidden="true"
+                    />
+                    <span>Messages</span>
+                    {messageCount && messageCount > 0 ? <small>({messageCount})</small> : null}
+                  </Link>
+                ) : null}
+                <button type="button" onClick={signOut} disabled={busy}>
+                  {busy ? "Signing out…" : "Sign out"}
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className={styles.identity}>Signed in as {session.user.name || session.user.email}</p>
+              <button className={styles.button} onClick={signOut} disabled={busy}>
+                {busy ? "Signing out…" : "Sign out"}
+              </button>
+            </>
+          )
+        )
       ) : (
         <button className={styles.button} onClick={signIn} disabled={busy || checkingSession}>
           <svg className={styles.googleLogo} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -72,7 +166,7 @@ export function AuthControls() {
           <span>{checkingSession ? "Checking sign-in…" : busy ? "Opening Google…" : "Sign in with Google"}</span>
         </button>
       )}
-      {error || sessionError ? (
+      {(error || sessionError) && (!signInOnly || !session) ? (
         <p className={styles.error} role="alert">
           {error || "Sign-in is temporarily unavailable. Please try again later."}
         </p>

@@ -3,6 +3,7 @@ import { courseAdminErrorResponse, getCourseAdminAccess } from "@/lib/course-adm
 import {
   createCoursePage,
   getAdminCoursePages,
+  reorderCoursePages,
   saveCoursePage,
   updateCoursePageContent,
   updateCoursePageDetails
@@ -59,6 +60,12 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json();
+    if (body.kind === "order") {
+      const pages = await reorderCoursePages(body);
+      revalidatePath("/x-ads");
+      return Response.json({ pages });
+    }
+
     const page = body.kind === "details"
       ? await updateCoursePageDetails(body)
       : body.kind === "content"

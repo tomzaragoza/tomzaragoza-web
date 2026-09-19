@@ -24,7 +24,10 @@ export default async function CourseAdminPage() {
           <h1>Course CMS</h1>
           <p>Create course pages here. Open any page to edit its content in place.</p>
         </div>
-        <Link href="/x-ads">View course</Link>
+        <div className={styles.headerActions}>
+          <Link href="/admin/course/messages">Messages</Link>
+          <Link href="/x-ads">View course</Link>
+        </div>
       </div>
       <CourseEditor pages={pages} />
     </main>

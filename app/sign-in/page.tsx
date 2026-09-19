@@ -11,9 +11,12 @@ export const metadata: Metadata = {
 export default async function SignInPage({
   searchParams
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; returnPath?: string }>;
 }) {
-  const { error } = await searchParams;
+  const { error, returnPath } = await searchParams;
+  const safeReturnPath = returnPath === "/x-ads" || returnPath?.startsWith("/x-ads/")
+    ? returnPath
+    : "/x-ads";
 
   return (
     <main className={styles.page}>
@@ -24,7 +27,7 @@ export default async function SignInPage({
           Google sign-in did not complete. Please try again.
         </p>
       ) : null}
-      <AuthControls />
+      <AuthControls returnPath={safeReturnPath} />
       <Link href="/x-ads">Back to the X Ads course</Link>
     </main>
   );

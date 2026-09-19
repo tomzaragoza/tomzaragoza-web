@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { CourseContentSection } from "@/lib/course-content-shared";
+import { AnnotationBlock } from "./course-annotations";
+import { CourseNoteThread } from "./course-note-thread";
 import { CourseVideo } from "./course-video";
 import styles from "./x-ads.module.css";
 
@@ -61,24 +63,36 @@ function PrincipleAnimation({ index }: { index: number }) {
 export function CourseSectionContent({
   section,
   index,
-  isPrinciples
+  isPrinciples,
+  pageSlug
 }: {
   section: CourseContentSection;
   index: number;
   isPrinciples: boolean;
+  pageSlug?: string;
 }) {
+  const blockId = (path: string) => pageSlug && section.id
+    ? `${section.id}:${path}`
+    : undefined;
+
   return (
     <>
       {section.heading ? (
         isPrinciples ? (
           <div className={styles.principleHeader}>
-            <h2>{section.heading}</h2>
+            <AnnotationBlock as="h2" blockId={blockId("heading")}>{section.heading}</AnnotationBlock>
             <PrincipleAnimation index={index} />
           </div>
-        ) : <h2>{section.heading}</h2>
+        ) : (
+          <AnnotationBlock as="h2" blockId={blockId("heading")}>{section.heading}</AnnotationBlock>
+        )
       ) : null}
       {section.paragraphs?.map((paragraph, paragraphIndex) => (
-        <p key={paragraphIndex}>
+        <AnnotationBlock
+          as="p"
+          blockId={blockId(`paragraph:${paragraphIndex}`)}
+          key={paragraphIndex}
+        >
           {typeof paragraph === "string"
             ? paragraph
             : paragraph.content.map((part, partIndex) =>
@@ -95,20 +109,38 @@ export function CourseSectionContent({
                   </a>
                 )
               )}
-        </p>
+        </AnnotationBlock>
       ))}
       {section.video ? <CourseVideo video={section.video} /> : null}
       {section.steps ? (
         <ol className={styles.setupSteps}>
-          {section.steps.map((step) => <li key={step}>{step}</li>)}
+          {section.steps.map((step, stepIndex) => (
+            <AnnotationBlock
+              as="li"
+              blockId={blockId(`step:${stepIndex}`)}
+              key={`${stepIndex}-${step}`}
+            >
+              {step}
+            </AnnotationBlock>
+          ))}
         </ol>
       ) : null}
       {section.items ? (
         <ul>
-          {section.items.map((item) => <li key={item}>{item}</li>)}
+          {section.items.map((item, itemIndex) => (
+            <AnnotationBlock
+              as="li"
+              blockId={blockId(`item:${itemIndex}`)}
+              key={`${itemIndex}-${item}`}
+            >
+              {item}
+            </AnnotationBlock>
+          ))}
         </ul>
       ) : null}
-      {section.note ? <p className={styles.lessonNote}>{section.note}</p> : null}
+      {section.note ? (
+        <CourseNoteThread note={section.note} pageSlug={pageSlug} sectionId={section.id} />
+      ) : null}
       {section.image ? (
         <figure
           className={[
@@ -128,10 +160,15 @@ export function CourseSectionContent({
               unoptimized
             />
           </a>
-          <figcaption>
-            {section.image.caption}{" "}
-            <a href={section.image.source} target="_blank" rel="noreferrer">Source: X</a>
-          </figcaption>
+          {section.image.caption || section.image.source ? (
+            <figcaption>
+              {section.image.caption}
+              {section.image.caption && section.image.source ? " " : null}
+              {section.image.source ? (
+                <a href={section.image.source} target="_blank" rel="noreferrer">Source</a>
+              ) : null}
+            </figcaption>
+          ) : null}
         </figure>
       ) : null}
       {section.links ? (

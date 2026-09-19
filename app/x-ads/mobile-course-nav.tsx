@@ -9,10 +9,16 @@ import styles from "./x-ads.module.css";
 
 export function MobileCourseNav({
   currentPath,
-  navigation
+  navigation,
+  canEdit = false,
+  showMessages = true,
+  showAccountControls = true
 }: {
   currentPath: string;
   navigation: readonly CourseNavigationItem[];
+  canEdit?: boolean;
+  showMessages?: boolean;
+  showAccountControls?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -156,7 +162,7 @@ export function MobileCourseNav({
                   <span className={styles.chapterNumber} aria-hidden="true">
                     {index === 0 ? "—" : String(index).padStart(2, "0")}
                   </span>
-                  {item.title}
+                  {item.path === "/x-ads" ? "Introduction" : item.title}
                 </span>
                 <span aria-hidden="true">→</span>
               </Link>
@@ -164,9 +170,15 @@ export function MobileCourseNav({
           </div>
         </nav>
 
-        <div className={styles.mobileAccountControls}>
-          <AuthControls />
-        </div>
+        {showAccountControls ? (
+          <div className={styles.mobileAccountControls}>
+            <AuthControls
+              courseAccount
+              adminMessages={canEdit}
+              showMessages={showMessages}
+            />
+          </div>
+        ) : null}
       </aside>
     </div>
   );

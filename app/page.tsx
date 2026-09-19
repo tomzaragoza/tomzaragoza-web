@@ -65,6 +65,7 @@ export default function Home() {
           ))}
         </nav>
         <footer className="home-footer">
+          <Link href="/login">login</Link>{", "}
           <Link href="/privacy">privacy</Link>{", "}
           <Link href="/terms">terms</Link>
         </footer>

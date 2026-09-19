@@ -33,8 +33,48 @@ Anonymous visitor IDs persist in browser storage. After sign-in, analytics uses
 the account ID. It resets the identity after sign-out or an account change.
 Names and email addresses are not sent as account properties.
 PostHog can add approximate location to events from the visitor's IP address,
-subject to the project's geographic data settings. Currency selection is not
-implemented by this integration.
+subject to the project's geographic data settings.
+
+### Course pricing and checkout
+
+The Course presale price is $20 USD, reduced from $49 USD. The Pro presale
+price is $99 USD, reduced from $149 USD. The presale ends on September 30,
+2026 at 12:00 a.m. Eastern Time. The server changes both Checkout prices to
+their regular amounts at that time. Both plans use fixed USD prices in every
+region. The previous PostHog regional pricing flag is not used for this offer.
+
+Pro includes the course,
+in-course messaging when the course opens, and one 30-minute consultation.
+A purchase records access for the later course launch. During the presale,
+only `tomdzaragoza@gmail.com` and `todazar@gmail.com` can read lessons or
+lesson discussions. Other customers
+see a purchase confirmation and cannot read lessons yet.
+
+Checkout does not require sign-in. Stripe collects an email address from guest
+buyers. The completion page verifies the paid Checkout Session and stores the
+purchase in MongoDB. The webhook performs the same idempotent update if the
+customer closes the browser before returning. A signed-in purchase is linked
+to its account. A guest purchase becomes available to a later Google sign-in
+with the same verified email address. A later Course purchase cannot reduce
+existing Pro access.
+
+Create a Stripe webhook endpoint for `/api/stripe/webhook`. Subscribe it to
+`checkout.session.completed` and `checkout.session.async_payment_succeeded`.
+Store its signing secret in `STRIPE_WEBHOOK_SECRET`. The route verifies every
+Stripe signature before it writes an entitlement.
+
+Checkout creates inline Stripe prices from the amounts in
+`lib/x-ads-offer.ts`. The checkout route accepts the Course or Pro product
+key. It selects the charge on the server and records the selected product and
+offer period in Checkout metadata.
+
+The X Ads base pixel uses ID `o6ml8` on every page. The checkout event uses
+`tw-o6ml8-rfgj8` when a visitor submits any Course or Pro buy button. The purchase event
+uses `tw-o6ml8-rfgj9` on `/x-ads/checkout-complete` after Stripe confirms
+payment. The checkout event includes the selected price and currency. The
+Purchase event uses null value and currency fields. Set the `NEXT_PUBLIC_X_*`
+values before building only if you need
+different IDs. Use X Pixel Helper and Events Manager to verify the live events.
 
 To verify a deployment, open the site and navigate to another course page.
 Check for `$pageview` events in the PostHog activity feed. The two events should
@@ -66,10 +106,10 @@ https://tomzaragoza.com/api/auth/callback/google
 The redirect URI must match the origin in `BETTER_AUTH_URL`. Restart the development server after changing `.env`.
 For a Google app in testing mode, add the Google accounts that will test sign-in to its test users.
 
-Sign in from the X Ads sidebar or `/sign-in`. After sign-in, the sidebar shows the user's name and a sign-out button.
-Sign-in returns to the current course page. Sign-in from `/sign-in` returns to `/x-ads`.
-The course introduction is public. Lesson content requires Google sign-in. The server checks each signed-in email against the complimentary-access allowlist.
-Accounts without complimentary access see the course checkout. Google sign-in does not grant admin or MCP access.
+Open `/login` to reach the Google sign-in page. The course pages do not show a
+Google sign-in button. Sign-in returns to `/x-ads` by default. The introduction
+is public. Only the two preview accounts can read lessons during the presale.
+Google sign-in does not grant admin or MCP access.
 
 Better Auth stores users, linked Google accounts, sessions, and verification records in the
 `auth_users`, `auth_accounts`, `auth_sessions`, and `auth_verifications` collections.

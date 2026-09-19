@@ -30,7 +30,7 @@ These checkboxes cover the sidebar links and section overview pages only. The co
 
 ## Core principles
 
-Current lesson copy: [Core principles](x-ads-core-principles.md). This replaces the earlier outline below and is stored in the page content for `/x-ads/principles`. The introduction page is public. Lesson content requires Google sign-in. The configured complimentary account can open every lesson without checkout. Other signed-in accounts see the upgrade prompt.
+Current lesson copy: [Core principles](x-ads-core-principles.md). This replaces the earlier outline below and is stored in the page content for `/x-ads/principles`. The introduction page is public. During the presale, only the two preview accounts can open lessons. Customers see a purchase confirmation while the lessons are in development. Other visitors see the presale offer.
 
 - [x] Ad platforms are basically AI marketing engines
 - [x] Pixel tracking is non-negotiable

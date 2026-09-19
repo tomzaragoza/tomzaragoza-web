@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getCourseAccess } from "@/lib/course-access";
+import { canViewCourseLessons } from "@/lib/course-access-policy";
 import { getCourseAdminAccess } from "@/lib/course-admin";
 import { getCourseNavigation, getCoursePageBySlug } from "@/lib/course-content";
 import { CoursePage } from "../course-page";
@@ -42,7 +43,7 @@ export default async function CourseContentPage({ params }: CourseRouteProps) {
 
   return (
     <CoursePage
-      page={page}
+      page={canViewCourseLessons(access) ? page : { ...page, content: [] }}
       access={access}
       navigation={navigation}
       canEdit={adminAccess.status === "authorized"}

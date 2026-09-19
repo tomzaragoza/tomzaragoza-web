@@ -17,7 +17,7 @@ export default function PrivacyPage() {
   return (
     <>
       <h1>Privacy Policy</h1>
-      <p>Last updated: September 14, 2026</p>
+      <p>Last updated: September 18, 2026</p>
       <p>
         This policy explains how Tom Zaragoza handles personal information on
         tomzaragoza.com. It covers this website, its course pages, and its sign-in
@@ -45,6 +45,12 @@ export default function PrivacyPage() {
           If you contact Tom, your message and the contact details you provide
           are used to respond to your request.
         </li>
+        <li>
+          If you buy the course, Stripe collects your email address and payment
+          details. This site records your email address, selected plan, payment
+          amount, currency, and Stripe purchase identifiers. It uses your email
+          address to connect a guest purchase to a later verified sign-in.
+        </li>
       </ul>
 
       <h2>Website analytics</h2>
@@ -60,8 +66,9 @@ export default function PrivacyPage() {
       </p>
       <p>
         The X Pixel sends page visits, buy-button submissions, and confirmed
-        purchases to X to measure advertising results. The purchase event does
-        not include payment amount, currency, or email address.
+        purchases to X to measure advertising results. A buy-button event
+        includes the selected plan and price. A purchase event does not include
+        payment amount, currency, or email address.
       </p>
 
       <h2>How information is used</h2>
@@ -77,14 +84,15 @@ export default function PrivacyPage() {
         cookies for sign-in and session security. PostHog uses cookies and local
         browser storage to recognize returning browsers. You can clear or block cookies
         in your browser, but sign-in features may stop working. The course
-        introduction is public. Course lessons require an active sign-in session.
+        introduction is public. During the presale, course lessons are limited
+        to two preview accounts.
       </p>
 
       <h2>Service providers and disclosure</h2>
       <p>
         Google processes information when you use Google sign-in under its own{" "}
         <a href="https://policies.google.com/privacy">privacy policy</a>.
-        {" "}PostHog processes analytics data through its US Cloud service. See
+        {" "}Stripe processes course payments. PostHog processes analytics data through its US Cloud service. See
         its <a href="https://posthog.com/privacy">privacy policy</a>.{" "}
         Hosting and database services process information needed to operate the
         site. Depending on their infrastructure, information may be processed

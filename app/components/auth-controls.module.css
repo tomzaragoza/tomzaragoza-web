@@ -32,3 +32,109 @@
 .error {
   color: var(--danger);
 }
+
+.profile {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.profileAvatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  overflow: hidden;
+  border-radius: 50%;
+  color: var(--course-text, var(--foreground));
+  background: #30302c;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.profileAvatar img {
+  width: 34px;
+  height: 34px;
+  object-fit: cover;
+}
+
+.profile > div:last-child {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.profile strong,
+.profile span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile strong {
+  color: var(--course-text, var(--foreground));
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.profile span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.accountLinks {
+  display: grid;
+  gap: 2px;
+  margin-top: 8px;
+}
+
+.accountLinks a,
+.accountLinks button {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  min-height: 32px;
+  padding: 6px 0;
+  border: 0;
+  color: var(--muted);
+  background: transparent;
+  font: inherit;
+  font-size: 11px;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.accountLinks a:hover,
+.accountLinks button:hover,
+.accountLinks .activeAccountLink {
+  color: var(--course-text, var(--foreground));
+}
+
+.accountLinks button {
+  grid-template-columns: 8px minmax(0, 1fr);
+}
+
+.accountLinks button::before {
+  content: "";
+}
+
+.accountLinks small {
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.messageDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.messageDotVisible {
+  background: #36a58c;
+  box-shadow: 0 0 0 3px rgb(54 165 140 / 12%);
+}

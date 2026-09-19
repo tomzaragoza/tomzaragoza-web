@@ -49,7 +49,7 @@ const sectionSchema = z.object({
     width: z.number().int().positive().max(10000),
     height: z.number().int().positive().max(10000),
     caption: z.string().max(1000),
-    source: z.string().min(1).max(2048),
+    source: z.string().min(1).max(2048).optional(),
     wide: z.boolean().optional()
   }).optional(),
   video: videoSchema.optional()
@@ -83,6 +83,10 @@ const coursePageDetailsSchema = coursePageSchema.pick({
 const coursePageContentSchema = coursePageSchema.pick({
   slug: true,
   content: true
+});
+
+const coursePageOrderSchema = z.object({
+  slugs: z.array(coursePageSchema.shape.slug).min(1).max(100)
 });
 
 type CoursePageInput = z.infer<typeof coursePageSchema>;
@@ -272,6 +276,42 @@ export async function createCoursePage(value: unknown) {
 
   await collection.insertOne(document);
   return toCoursePageRecord(document);
+}
+
+export async function reorderCoursePages(value: unknown) {
+  const input = coursePageOrderSchema.parse(value);
+  const collection = getCourseCollection();
+
+  if (!collection) {
+    throw new Error("Course database is not configured.");
+  }
+
+  await ensureCourseSeeded(collection);
+
+  const uniqueSlugs = new Set(input.slugs);
+  if (uniqueSlugs.size !== input.slugs.length || input.slugs[0] !== "introduction") {
+    throw new Error("Invalid course page order.");
+  }
+
+  const existingPages = await collection.find({}, { projection: { slug: 1 } }).toArray();
+  if (
+    existingPages.length !== input.slugs.length ||
+    existingPages.some((page) => !uniqueSlugs.has(page.slug))
+  ) {
+    throw new Error("The course page order is incomplete.");
+  }
+
+  const updatedAt = new Date();
+  await collection.bulkWrite(
+    input.slugs.map((slug, order) => ({
+      updateOne: {
+        filter: { slug },
+        update: { $set: { order, updatedAt } }
+      }
+    }))
+  );
+
+  return getAdminCoursePages();
 }
 
 async function getExistingCourseDocument(slug: string) {

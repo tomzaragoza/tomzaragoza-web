@@ -28,7 +28,7 @@ export type CourseContentSection = {
     width: number;
     height: number;
     caption: string;
-    source: string;
+    source?: string;
     wide?: boolean;
   };
   video?: CourseVideo;

@@ -20,6 +20,7 @@ export function PostHogIdentity() {
 
     if (userId && previousUserId !== userId) {
       posthog.identify(userId);
+      posthog.reloadFeatureFlags();
     }
   }, [userId, isPending, error]);
 

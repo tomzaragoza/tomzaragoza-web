@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getStripe } from "@/lib/stripe";
+import { fulfillXAdsCheckoutSession } from "@/lib/stripe-course-fulfillment";
+import type { PaidXAdsPurchase } from "@/lib/stripe-course-purchase";
 import { PurchasePixelEvent } from "./purchase-pixel-event";
 import styles from "../x-ads.module.css";
 
@@ -11,14 +12,11 @@ export default async function CheckoutCompletePage({
   searchParams: Promise<{ session_id?: string }>;
 }) {
   const { session_id: checkoutSessionId } = await searchParams;
-  let isPaid = false;
+  let purchase: PaidXAdsPurchase | null = null;
 
-  if (checkoutSessionId?.startsWith("cs_") && checkoutSessionId.length <= 255) {
+  if (checkoutSessionId) {
     try {
-      const session = await getStripe()?.checkout.sessions.retrieve(checkoutSessionId);
-      isPaid = session?.mode === "payment" &&
-        session.payment_status === "paid" &&
-        session.metadata?.purchase === "x-ads-course-presale";
+      purchase = await fulfillXAdsCheckoutSession(checkoutSessionId);
     } catch (error) {
       console.error("Could not confirm X Ads checkout.", error);
     }
@@ -27,16 +25,28 @@ export default async function CheckoutCompletePage({
   return (
     <main className={styles.checkoutCompletePage}>
       <section className={styles.checkoutCompleteCard}>
-        <h1>{isPaid ? "Your purchase is confirmed" : "We could not confirm your payment yet"}</h1>
-        {isPaid ? (
+        <h1>{purchase ? "Your purchase is confirmed" : "We could not confirm your payment yet"}</h1>
+        {purchase ? (
           <>
             <PurchasePixelEvent />
-            <p>Thank you for purchasing the X Ads course.</p>
+            <p>
+              Your {purchase.tier === "pro" ? "Pro" : "Course"} purchase is recorded.
+              The lessons will open when the course launches.
+            </p>
+            <p>
+              When you sign in to access the course, use the same email address
+              you entered at checkout.
+            </p>
           </>
         ) : (
-          <p>Your payment may still be processing. Check your Stripe receipt, then return to this page to try again.</p>
+          <p>
+            Your payment may still be processing. Check your Stripe receipt,
+            then return to this page to try again.
+          </p>
         )}
-        <Link className={styles.presaleButton} href="/x-ads">Back to the course →</Link>
+        <Link className={styles.presaleButton} href="/x-ads">
+          Back to the course →
+        </Link>
       </section>
     </main>
   );

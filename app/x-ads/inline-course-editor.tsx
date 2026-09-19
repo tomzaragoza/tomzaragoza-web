@@ -12,6 +12,8 @@ import type {
 import { CourseSectionContent } from "./course-section";
 import styles from "./x-ads.module.css";
 
+type EditableListField = "steps" | "items";
+
 function paragraphText(paragraph: CourseParagraph) {
   if (typeof paragraph === "string") return paragraph;
   return paragraph.content.map((part) => typeof part === "string" ? part : part.label).join("");
@@ -64,6 +66,7 @@ export function InlineCourseHeader({ page }: { page: CoursePageRecord }) {
         <label>
           Page title
           <input
+            className={styles.inlinePageTitleInput}
             value={draft.title}
             onChange={(event) => setDraft({ ...draft, title: event.target.value })}
           />
@@ -71,6 +74,7 @@ export function InlineCourseHeader({ page }: { page: CoursePageRecord }) {
         <label>
           Navigation description
           <textarea
+            className={styles.inlinePageDescriptionInput}
             rows={3}
             value={draft.description}
             onChange={(event) => setDraft({ ...draft, description: event.target.value })}
@@ -79,6 +83,7 @@ export function InlineCourseHeader({ page }: { page: CoursePageRecord }) {
         <label>
           Lesson goal
           <textarea
+            className={styles.inlineOutcomeInput}
             rows={3}
             value={draft.outcome ?? ""}
             onChange={(event) => setDraft({ ...draft, outcome: event.target.value || undefined })}
@@ -143,6 +148,34 @@ export function InlineCourseEditor({
         index === paragraphIndex ? value : paragraph
       )
     });
+  }
+
+  function updateListItem(
+    sectionId: string,
+    field: EditableListField,
+    itemIndex: number,
+    value: string
+  ) {
+    const section = draft.content.find((item) => item.id === sectionId);
+    const list = section?.[field];
+    if (!list) return;
+    const updatedList = list.map((item, index) => index === itemIndex ? value : item);
+    updateSection(sectionId, field === "steps" ? { steps: updatedList } : { items: updatedList });
+  }
+
+  function addListItem(sectionId: string, field: EditableListField) {
+    const section = draft.content.find((item) => item.id === sectionId);
+    const list = section?.[field] ?? [];
+    const updatedList = [...list, field === "steps" ? "New step." : "New list item."];
+    updateSection(sectionId, field === "steps" ? { steps: updatedList } : { items: updatedList });
+  }
+
+  function removeListItem(sectionId: string, field: EditableListField, itemIndex: number) {
+    const section = draft.content.find((item) => item.id === sectionId);
+    const list = section?.[field];
+    if (!list) return;
+    const updatedList = list.filter((_, index) => index !== itemIndex);
+    updateSection(sectionId, field === "steps" ? { steps: updatedList } : { items: updatedList });
   }
 
   function addSection() {
@@ -228,6 +261,7 @@ export function InlineCourseEditor({
             <label>
               Section heading
               <input
+                className={styles.inlineSectionHeadingInput}
                 value={section.heading ?? ""}
                 onChange={(event) => updateSection(section.id, { heading: event.target.value })}
               />
@@ -237,6 +271,7 @@ export function InlineCourseEditor({
                 <label key={paragraphIndex}>
                   {typeof paragraph === "string" ? `Paragraph ${paragraphIndex + 1}` : `Rich paragraph ${paragraphIndex + 1}`}
                   <textarea
+                    className={styles.inlineParagraphInput}
                     rows={5}
                     value={paragraphText(paragraph)}
                     onChange={(event) => updateParagraph(section.id, paragraphIndex, event.target.value)}
@@ -254,7 +289,193 @@ export function InlineCourseEditor({
                 Add paragraph
               </button>
             </div>
-            <div className={styles.inlineVideoFields}>
+            {section.steps ? (
+              <div className={styles.inlineListFields}>
+                <div className={styles.inlineFormHeader}>
+                  <strong>Ordered steps</strong>
+                  <button type="button" onClick={() => addListItem(section.id, "steps")}>Add step</button>
+                </div>
+                {section.steps.map((step, stepIndex) => (
+                  <div className={styles.inlineListRow} key={stepIndex}>
+                    <label>
+                      Step {stepIndex + 1}
+                      <textarea
+                        className={styles.inlineListInput}
+                        rows={3}
+                        value={step}
+                        onChange={(event) => updateListItem(section.id, "steps", stepIndex, event.target.value)}
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => removeListItem(section.id, "steps", stepIndex)}
+                      aria-label={`Remove step ${stepIndex + 1}`}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+            {section.items ? (
+              <div className={styles.inlineListFields}>
+                <div className={styles.inlineFormHeader}>
+                  <strong>Bullet list</strong>
+                  <button type="button" onClick={() => addListItem(section.id, "items")}>Add item</button>
+                </div>
+                {section.items.map((item, itemIndex) => (
+                  <div className={styles.inlineListRow} key={itemIndex}>
+                    <label>
+                      Item {itemIndex + 1}
+                      <textarea
+                        className={styles.inlineListInput}
+                        rows={3}
+                        value={item}
+                        onChange={(event) => updateListItem(section.id, "items", itemIndex, event.target.value)}
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => removeListItem(section.id, "items", itemIndex)}
+                      aria-label={`Remove list item ${itemIndex + 1}`}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+            <div className={styles.inlineNoteFields}>
+              <div className={styles.inlineFormHeader}>
+                <strong>Note</strong>
+                {section.note !== undefined ? (
+                  <button type="button" onClick={() => updateSection(section.id, { note: undefined })}>Remove note</button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => updateSection(section.id, { note: "Add note text here." })}
+                  >
+                    Add note
+                  </button>
+                )}
+              </div>
+              {section.note !== undefined ? (
+                <label>
+                  Note text
+                  <textarea
+                    className={styles.inlineNoteInput}
+                    rows={5}
+                    value={section.note}
+                    onChange={(event) => updateSection(section.id, { note: event.target.value })}
+                  />
+                </label>
+              ) : null}
+            </div>
+            <div className={styles.inlineMediaFields}>
+              <div className={styles.inlineFormHeader}>
+                <strong>Image</strong>
+                {section.image ? (
+                  <button type="button" onClick={() => updateSection(section.id, { image: undefined })}>Remove image</button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => updateSection(section.id, {
+                      image: {
+                        src: "",
+                        alt: "",
+                        width: 1200,
+                        height: 675,
+                        caption: "",
+                        wide: true
+                      }
+                    })}
+                  >
+                    Add image
+                  </button>
+                )}
+              </div>
+              {section.image ? (
+                <>
+                  <label>
+                    Image URL or public path
+                    <input
+                      placeholder="/images/example.png or https://example.com/image.png"
+                      value={section.image.src}
+                      onChange={(event) => updateSection(section.id, {
+                        image: { ...section.image!, src: event.target.value }
+                      })}
+                    />
+                  </label>
+                  <label>
+                    Alternative text
+                    <textarea
+                      rows={2}
+                      value={section.image.alt}
+                      onChange={(event) => updateSection(section.id, {
+                        image: { ...section.image!, alt: event.target.value }
+                      })}
+                    />
+                  </label>
+                  <label>
+                    Caption
+                    <input
+                      value={section.image.caption}
+                      onChange={(event) => updateSection(section.id, {
+                        image: { ...section.image!, caption: event.target.value }
+                      })}
+                    />
+                  </label>
+                  <label>
+                    Optional source URL
+                    <input
+                      type="url"
+                      placeholder="https://example.com/source"
+                      value={section.image.source ?? ""}
+                      onChange={(event) => updateSection(section.id, {
+                        image: { ...section.image!, source: event.target.value || undefined }
+                      })}
+                    />
+                  </label>
+                  <div className={styles.inlineDimensionFields}>
+                    <label>
+                      Width
+                      <input
+                        type="number"
+                        min={1}
+                        max={10000}
+                        value={section.image.width}
+                        onChange={(event) => updateSection(section.id, {
+                          image: { ...section.image!, width: Math.max(1, Number(event.target.value) || 1) }
+                        })}
+                      />
+                    </label>
+                    <label>
+                      Height
+                      <input
+                        type="number"
+                        min={1}
+                        max={10000}
+                        value={section.image.height}
+                        onChange={(event) => updateSection(section.id, {
+                          image: { ...section.image!, height: Math.max(1, Number(event.target.value) || 1) }
+                        })}
+                      />
+                    </label>
+                    <label className={styles.inlineCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={section.image.wide ?? false}
+                        onChange={(event) => updateSection(section.id, {
+                          image: { ...section.image!, wide: event.target.checked }
+                        })}
+                      />
+                      Use wide layout
+                    </label>
+                  </div>
+                </>
+              ) : null}
+            </div>
+            <div className={styles.inlineMediaFields}>
               <div className={styles.inlineFormHeader}>
                 <strong>Video recording</strong>
                 {section.video ? (

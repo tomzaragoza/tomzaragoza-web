@@ -1,10 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ChartNoAxesCombined, Eye, MousePointer2, Target } from "lucide-react";
-import { AuthControls } from "@/app/components/auth-controls";
 import type { CourseAccess } from "@/lib/course-access";
+import { canViewCourseLessons } from "@/lib/course-access-policy";
 import type { CourseNavigationItem, CoursePageRecord } from "@/lib/course-content-shared";
+import type { PricingTier } from "@/lib/pricing-parity";
+import { isXAdsPresaleActive } from "@/lib/x-ads-offer";
+import { CourseAnnotations } from "./course-annotations";
 import { CourseSectionContent } from "./course-section";
+import { CourseSidebar } from "./course-sidebar";
 import { InlineCourseEditor, InlineCourseHeader } from "./inline-course-editor";
 import { MobileCourseNav } from "./mobile-course-nav";
 import { PresaleCheckout } from "./presale-checkout";
@@ -14,30 +18,34 @@ type CoursePageAccess = CourseAccess | "public";
 
 function CourseAccessGate({
   access,
-  returnPath
+  returnPath,
+  initialNow
 }: {
-  access: Exclude<CoursePageAccess, "full" | "public">;
+  access: CoursePageAccess;
   returnPath: string;
+  initialNow: number;
 }) {
-  const isSignedOut = access === "signed-out";
+  const hasPurchased = access === "course" || access === "pro";
+  const presale = isXAdsPresaleActive(initialNow);
 
   return (
     <section className={styles.accessGate} aria-labelledby="course-access-title">
-      <p className={styles.accessEyebrow}>Course access</p>
       <h2 id="course-access-title">
-        {isSignedOut ? "Sign in to access the course" : "Upgrade to unlock this lesson"}
+        {hasPurchased ? "Your presale purchase is confirmed" : presale ? "Buy the Presale" : "Get the course"}
       </h2>
       <p>
-        {isSignedOut
-          ? "The course is available only to signed-in accounts. Use your Google account to continue."
-          : "Your account is signed in, but it does not have course access yet. Upgrade to open every lesson."}
+        {hasPurchased
+          ? "The lessons are still in development. Your purchase is recorded, and the course will open to customers when it launches."
+          : presale
+            ? "The course is currently in development! Buy at the presale price before the September 30 launch. Prices go up then."
+            : "The presale has ended. Choose the Course or Pro plan below."}
       </p>
-      {isSignedOut ? (
-        <div className={styles.gateAuthControls}>
-          <AuthControls />
-        </div>
+      {hasPurchased ? (
+        <Link className={styles.presaleButton} href="/x-ads#presale">
+          View your purchase →
+        </Link>
       ) : (
-        <PresaleCheckout returnPath={returnPath} />
+        <PresaleCheckout returnPath={returnPath} initialNow={initialNow} compact />
       )}
     </section>
   );
@@ -47,15 +55,30 @@ export function CoursePage({
   page,
   access,
   navigation,
-  canEdit = false
+  canEdit = false,
+  purchaseStatus = null
 }: {
   page: CoursePageRecord;
   access: CoursePageAccess;
   navigation: readonly CourseNavigationItem[];
   canEdit?: boolean;
+  purchaseStatus?: PricingTier | "error" | null;
 }) {
   const isIntroduction = page.path === "/x-ads";
   const isPrinciples = page.path === "/x-ads/principles";
+  const hasCourseAccess = access !== "public" && canViewCourseLessons(access);
+  const hasMessaging = hasCourseAccess;
+  const confirmedPurchaseStatus = purchaseStatus === "pro"
+    ? access === "pro"
+    : purchaseStatus === "course"
+      ? access === "course" || access === "pro"
+      : false;
+  // Read the request time once so the server and client show the same initial price.
+  // eslint-disable-next-line react-hooks/purity
+  const initialNow = Date.now();
+  const currentPageIndex = navigation.findIndex((item) => item.path === page.path);
+  const previousPage = currentPageIndex > 0 ? navigation[currentPageIndex - 1] : undefined;
+  const nextPage = currentPageIndex >= 0 ? navigation[currentPageIndex + 1] : undefined;
 
   return (
     <main className={styles.page}>
@@ -63,67 +86,22 @@ export function CoursePage({
         Skip to course content
       </a>
 
-      <MobileCourseNav currentPath={page.path} navigation={navigation} />
+      <MobileCourseNav
+        currentPath={page.path}
+        navigation={navigation}
+        canEdit={canEdit}
+        showMessages={hasMessaging}
+        showAccountControls={access !== "signed-out" && access !== "public"}
+      />
 
       <div className={styles.courseShell}>
-        <aside className={styles.sidebar} aria-label="Course navigation">
-          <div className={styles.sidebarInner}>
-            <div className={styles.switcherWrap}>
-              <details className={styles.siteSwitcher}>
-                <summary>
-                  <Image
-                    className={styles.switcherAvatar}
-                    src="/images/tom-zaragoza.jpg"
-                    width={32}
-                    height={32}
-                    alt="Tom Zaragoza"
-                    priority
-                  />
-                  <span>X Ads Course</span>
-                  <svg viewBox="0 0 16 16" aria-hidden="true">
-                    <path d="m5 6 3-3 3 3M5 10l3 3 3-3" />
-                  </svg>
-                </summary>
-
-                <div className={styles.switcherMenu}>
-                  <Link href="/">
-                    <span>Homepage</span>
-                  </Link>
-                  <Link className={styles.currentPage} href="/x-ads" aria-current="page">
-                    <span>X Ads Course</span>
-                    <span className={styles.checkmark} aria-hidden="true">✓</span>
-                  </Link>
-                </div>
-              </details>
-            </div>
-
-            <nav className={styles.contents} aria-label="Course contents">
-              {navigation.map((item, index) => (
-                <div className={styles.navGroup} key={item.path}>
-                  <Link
-                    className={`${styles.parentLink} ${
-                      page.path === item.path ? styles.activeLink : ""
-                    }`}
-                    href={item.path}
-                    aria-current={page.path === item.path ? "page" : undefined}
-                  >
-                    <span className={styles.navTitle}>
-                      <span className={styles.chapterNumber} aria-hidden="true">
-                        {index === 0 ? "—" : String(index).padStart(2, "0")}
-                      </span>
-                      {item.title}
-                    </span>
-                    <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
-              ))}
-            </nav>
-            <div className={styles.accountControls}>
-              {canEdit ? <Link className={styles.cmsLink} href="/admin/course">Manage course pages</Link> : null}
-              <AuthControls />
-            </div>
-          </div>
-        </aside>
+        <CourseSidebar
+          currentPath={page.path}
+          navigation={navigation}
+          canEdit={canEdit}
+          showMessages={hasMessaging}
+          showAccountControls={access !== "signed-out" && access !== "public"}
+        />
 
         <article className={styles.content} id="course-content">
           {canEdit && !isIntroduction ? (
@@ -148,13 +126,22 @@ export function CoursePage({
             </header>
           )}
 
-          <div className={`${styles.mainContent} ${isIntroduction ? styles.introductionContent : ""}`}>
+          <div className={`${styles.mainContent} ${isIntroduction ? styles.introductionContent : ""} ${
+            hasMessaging && !isIntroduction && !canEdit ? styles.annotatedMainContent : ""
+          }`}>
             {canEdit && !isIntroduction ? (
               <InlineCourseEditor page={page} isPrinciples={isPrinciples} />
-            ) : access === "signed-out" ? (
-              <CourseAccessGate access={access} returnPath={page.path} />
             ) : isIntroduction ? (
               <section className={styles.salesCopy}>
+                {confirmedPurchaseStatus && (purchaseStatus === "course" || purchaseStatus === "pro") ? (
+                  <p className={styles.purchaseNotice} role="status">
+                    Payment confirmed. Your {purchaseStatus === "pro" ? "Pro" : "Course"} presale purchase is recorded.
+                  </p>
+                ) : purchaseStatus === "error" ? (
+                  <p className={styles.purchaseError} role="alert">
+                    We could not confirm this payment yet. Refresh the page in a moment.
+                  </p>
+                ) : null}
                 <div className={styles.authorGreeting}>
                   <Image
                     src="/images/tom-zaragoza.jpg"
@@ -165,13 +152,16 @@ export function CoursePage({
                   <p>Hey, Tom here!</p>
                 </div>
                 <p>
-                  This textbook will teach you how to run X ads for whatever product
+                  This course will teach you how to run X ads for whatever product
                   you are building.
                 </p>
                 <p>
-                  I made it super straightforward and instructional, so don&apos;t
-                  be surprised when you can&apos;t find any fluff inside. I get
-                  straight to the point and tell you what you need to do immediately.
+                  I&apos;m building the course to be{" "}
+                  <em>super</em>{" "}
+                  straightforward and instructional. I get straight to the point,
+                  tell you what you need to do, and explain fundamentals so you know
+                  the reasoning
+                  behind the actions you&apos;ll take.
                 </p>
                 <p>
                   I&apos;ve been running ads on X since 2019 and I can confidently
@@ -182,24 +172,25 @@ export function CoursePage({
                 </p>
                 <p>
                   I&apos;ve found hundreds of customers from X Ads and I&apos;ll show you
-                  everything you need to know to do the same.
+                  everything you need to know to do the same!
                 </p>
-                {access === "full" ? (
+                {hasCourseAccess ? (
                   <>
-                    <p>Your account has full access. Continue to the first lesson.</p>
+                    <p>
+                      Your account has course preview access.
+                      Continue to the first lesson.
+                    </p>
                     <Link className={styles.presaleButton} href="/x-ads/principles">
                       Start the course →
                     </Link>
                   </>
+                ) : access === "course" || access === "pro" ? (
+                  <p>
+                    Your {access === "pro" ? "Pro" : "Course"} presale purchase is recorded.
+                    The lessons will open to customers when the course launches.
+                  </p>
                 ) : (
-                  <>
-                    <p>
-                      If this sounds good, click the button below to unlock the course
-                      and let&apos;s get started.
-                    </p>
-                    <span className={styles.checkoutArrow} aria-hidden="true">&darr;</span>
-                    <PresaleCheckout returnPath={page.path} />
-                  </>
+                  <PresaleCheckout returnPath={page.path} initialNow={initialNow} />
                 )}
                 <section className={styles.curriculum} aria-labelledby="curriculum-title">
                   <h2 id="curriculum-title">Inside the course</h2>
@@ -222,24 +213,71 @@ export function CoursePage({
                   </ol>
                 </section>
               </section>
-            ) : access === "full" ? (
+            ) : hasCourseAccess ? (
+              hasMessaging ? (
+                <CourseAnnotations pageSlug={page.slug}>
+                  <div className={styles.lessonContent}>
+                    {page.content.map((section, index) => (
+                      <section
+                        className={`${styles.contentSection} ${isPrinciples ? styles.principleSection : ""}`}
+                        key={section.id ?? index}
+                      >
+                        <CourseSectionContent
+                          section={section}
+                          index={index}
+                          isPrinciples={isPrinciples}
+                          pageSlug={page.slug}
+                        />
+                      </section>
+                    ))}
+                  </div>
+                </CourseAnnotations>
+              ) : (
                 <div className={styles.lessonContent}>
                   {page.content.map((section, index) => (
                     <section
                       className={`${styles.contentSection} ${isPrinciples ? styles.principleSection : ""}`}
                       key={section.id ?? index}
                     >
-                      <CourseSectionContent section={section} index={index} isPrinciples={isPrinciples} />
+                      <CourseSectionContent
+                        section={section}
+                        index={index}
+                        isPrinciples={isPrinciples}
+                      />
                     </section>
                   ))}
                 </div>
+              )
             ) : (
               <CourseAccessGate
                 access={access === "public" ? "signed-out" : access}
                 returnPath={page.path}
+                initialNow={initialNow}
               />
             )}
           </div>
+
+          {previousPage || nextPage ? (
+            <nav className={styles.courseFooter} aria-label="Previous and next course pages">
+              {previousPage ? (
+                <Link className={styles.courseFooterLink} href={previousPage.path}>
+                  <span>← Previous</span>
+                  <strong>
+                    {previousPage.path === "/x-ads" ? "Introduction" : previousPage.title}
+                  </strong>
+                </Link>
+              ) : null}
+              {nextPage ? (
+                <Link
+                  className={`${styles.courseFooterLink} ${styles.nextCoursePage}`}
+                  href={nextPage.path}
+                >
+                  <span>Next →</span>
+                  <strong>{nextPage.title}</strong>
+                </Link>
+              ) : null}
+            </nav>
+          ) : null}
         </article>
       </div>
     </main>

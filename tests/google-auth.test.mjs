@@ -3,13 +3,32 @@ import { test } from "node:test";
 import { randomBytes } from "node:crypto";
 import { getGoogleAuth } from "../lib/google-auth.ts";
 import { isCourseAdminEmail } from "../lib/course-admin-policy.ts";
-import { hasComplimentaryCourseAccess } from "../lib/course-access-policy.ts";
+import { canViewCourseLessons, hasComplimentaryCourseAccess } from "../lib/course-access-policy.ts";
+import { courseTierFromRank } from "../lib/course-entitlements.ts";
 
 test("complimentary course access uses the configured Google email", () => {
   assert.equal(hasComplimentaryCourseAccess("tomdzaragoza@gmail.com"), true);
   assert.equal(hasComplimentaryCourseAccess(" TOMDZARAGOZA@GMAIL.COM "), true);
+  assert.equal(hasComplimentaryCourseAccess("todazar@gmail.com"), true);
+  assert.equal(hasComplimentaryCourseAccess(" TODAZAR@GMAIL.COM "), true);
   assert.equal(hasComplimentaryCourseAccess("someone@example.com"), false);
   assert.equal(hasComplimentaryCourseAccess(null), false);
+});
+
+test("presale purchases do not open lessons", () => {
+  assert.equal(canViewCourseLessons("owner"), true);
+  assert.equal(canViewCourseLessons("course"), false);
+  assert.equal(canViewCourseLessons("pro"), false);
+  assert.equal(canViewCourseLessons("signed-out"), false);
+  assert.equal(canViewCourseLessons("upgrade-required"), false);
+});
+
+test("course entitlement ranks preserve Pro access", () => {
+  assert.equal(courseTierFromRank(undefined), null);
+  assert.equal(courseTierFromRank(0), null);
+  assert.equal(courseTierFromRank(1), "course");
+  assert.equal(courseTierFromRank(2), "pro");
+  assert.equal(courseTierFromRank(3), "pro");
 });
 
 test("course administration is limited to Tom's Google email", () => {
