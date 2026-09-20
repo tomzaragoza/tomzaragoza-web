@@ -110,9 +110,10 @@ https://tomzaragoza.com/api/auth/callback/google
 The redirect URI must match the origin in `BETTER_AUTH_URL`. Restart the development server after changing `.env`.
 For a Google app in testing mode, add the Google accounts that will test sign-in to its test users.
 
-Open `/login` to reach the Google sign-in page. The course pages do not show a
-Google sign-in button. Sign-in returns to `/x-ads` by default. The introduction
-is public. Only the two preview accounts can read lessons during the presale.
+Signed-out visitors see the course landing page at `/x-ads`, with a Google
+sign-in button. `/login` also opens the sign-in page. Sign-in returns to
+`/x-ads` by default and shows the existing course area. Only the two preview
+accounts can read lessons during the presale.
 Google sign-in does not grant admin or MCP access.
 
 Better Auth stores users, linked Google accounts, sessions, and verification records in the

@@ -1,4 +1,5 @@
 import { CoursePage } from "./course-page";
+import { CourseLanding } from "./course-landing";
 import { getCourseAccess } from "@/lib/course-access";
 import { getCourseAdminAccess } from "@/lib/course-admin";
 import { getCourseNavigation, getCoursePageBySlug } from "@/lib/course-content";
@@ -28,10 +29,14 @@ export default async function IntroductionPage({
     return null;
   }
 
+  if (access === "signed-out") {
+    return <CourseLanding navigation={navigation} purchaseStatus={purchaseStatus} />;
+  }
+
   return (
     <CoursePage
       page={page}
-      access={access === "signed-out" ? "public" : access}
+      access={access}
       navigation={navigation}
       canEdit={adminAccess.status === "authorized"}
       purchaseStatus={purchaseStatus}
