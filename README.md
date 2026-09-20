@@ -19,7 +19,7 @@ Endpoint definitions live in `content/endpoints.json`.
 
 PostHog starts in `instrumentation-client.ts`. It captures page views, including
 navigation between course pages, and interactions with page elements. Text and
-element attributes are masked. Session recording is disabled. Admin page events
+element attributes are masked. Session recording is enabled. Admin page events
 are excluded.
 
 Set `NEXT_PUBLIC_POSTHOG_KEY` to the project token and

@@ -61,7 +61,7 @@ export default function PrivacyPage() {
         location derived from your IP address. A browser identifier connects
         visits from the same browser. If you sign in, your account identifier
         connects that activity to your account. The site resets the analytics
-        identity after sign-out. Session recording is disabled, and captured
+        identity after sign-out. Session recording is enabled, and captured
         element text and attributes are masked.
       </p>
       <p>

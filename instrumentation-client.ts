@@ -8,7 +8,7 @@ if (projectToken) {
     defaults: "2026-05-30",
     capture_pageview: "history_change",
     person_profiles: "identified_only",
-    disable_session_recording: true,
+    disable_session_recording: false,
     mask_all_text: true,
     mask_all_element_attributes: true,
     before_send: (event) => {
