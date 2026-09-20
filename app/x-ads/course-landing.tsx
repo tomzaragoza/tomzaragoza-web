@@ -24,7 +24,7 @@ export function CourseLanding({ navigation, purchaseStatus }: {
       <a className={styles.skipLink} href="#main">Skip to content</a>
       <header className={styles.header}>
         <Link href="/x-ads" className={styles.brand} aria-label="X Ads course home">
-          <span className={styles.brandMark} aria-hidden="true">𝕏</span>
+          <Image className={styles.brandMark} src="/images/tom-zaragoza.jpg" width={32} height={32} alt="Tom Zaragoza" />
           <span>X Ads<span className={styles.brandSuffix}> / by Tom Zaragoza</span></span>
         </Link>
         <nav aria-label="Main navigation" className={styles.navigation}>
