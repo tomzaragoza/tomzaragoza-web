@@ -112,7 +112,9 @@ For a Google app in testing mode, add the Google accounts that will test sign-in
 
 Signed-out visitors see the course landing page at `/x-ads`, with a Google
 sign-in button. `/login` also opens the sign-in page. Sign-in returns to
-`/x-ads` by default and shows the existing course area. Only the two preview
+`/x-ads` by default and shows the workspace dashboard. Its sidebar includes
+Messages, an expandable course list, Ads Library, and course purchase links.
+The library currently shows an empty state. Only the two preview
 accounts can read lessons during the presale.
 Google sign-in does not grant admin or MCP access.
 

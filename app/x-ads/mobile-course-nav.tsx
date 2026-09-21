@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { AuthControls } from "@/app/components/auth-controls";
+import { WorkspaceNavigation } from "./workspace-navigation";
 import type { CourseNavigationItem } from "@/lib/course-content-shared";
 import styles from "./x-ads.module.css";
 
@@ -47,9 +47,9 @@ export function MobileCourseNav({
 
       const focusable = Array.from(
         panelRef.current.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          'a[href], button:not([disabled]), summary, input:not([disabled]), [tabindex]:not([tabindex="-1"])'
         )
-      );
+      ).filter((element) => element.getClientRects().length > 0);
       const first = focusable[0];
       const last = focusable.at(-1);
 
@@ -97,7 +97,7 @@ export function MobileCourseNav({
             height={32}
             alt=""
           />
-          <span>X Ads Course</span>
+          <span>Learn X Ads</span>
         </Link>
         <button
           ref={menuButtonRef}
@@ -148,37 +148,9 @@ export function MobileCourseNav({
           </button>
         </div>
 
-        <nav className={styles.mobilePanelNav} aria-label="Course navigation">
-          <div className={styles.mobileContents}>
-            {navigation.map((item, index) => (
-              <Link
-                className={currentPath === item.path ? styles.mobileActiveLink : ""}
-                href={item.path}
-                aria-current={currentPath === item.path ? "page" : undefined}
-                onClick={() => closeMenu(false)}
-                key={item.path}
-              >
-                <span className={styles.navTitle}>
-                  <span className={styles.chapterNumber} aria-hidden="true">
-                    {index === 0 ? "—" : String(index).padStart(2, "0")}
-                  </span>
-                  {item.path === "/x-ads" ? "Introduction" : item.title}
-                </span>
-                <span aria-hidden="true">→</span>
-              </Link>
-            ))}
-          </div>
-        </nav>
-
-        {showAccountControls ? (
-          <div className={styles.mobileAccountControls}>
-            <AuthControls
-              courseAccount
-              adminMessages={canEdit}
-              showMessages={showMessages}
-            />
-          </div>
-        ) : null}
+        <WorkspaceNavigation currentPath={currentPath} navigation={navigation}
+          canEdit={canEdit} showMessages={showMessages} showAccountControls={showAccountControls}
+          onNavigate={() => closeMenu(false)} />
       </aside>
     </div>
   );

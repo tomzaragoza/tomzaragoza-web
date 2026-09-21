@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getCourseAccess } from "@/lib/course-access";
 import { canViewCourseLessons } from "@/lib/course-access-policy";
 import { getCourseAdminAccess } from "@/lib/course-admin";
-import { getCourseNavigation, getCoursePageBySlug } from "@/lib/course-content";
+import { getCourseNavigation, getCoursePageBySlug, getAdminCoursePages } from "@/lib/course-content";
 import { CoursePage } from "../course-page";
 
 type CourseRouteProps = {
@@ -32,18 +32,22 @@ export async function generateMetadata({ params }: CourseRouteProps): Promise<Me
 
 export default async function CourseContentPage({ params }: CourseRouteProps) {
   const { slug } = await params;
-  const [page, navigation, access, adminAccess] = await Promise.all([
+  const [publishedPage, publishedNavigation, access, adminAccess] = await Promise.all([
     getCoursePageBySlug(slug),
     getCourseNavigation(),
     getCourseAccess(),
     getCourseAdminAccess()
   ]);
 
+  const canEdit = adminAccess.status === "authorized";
+  const adminPages = canEdit ? await getAdminCoursePages() : null;
+  const page = adminPages?.find(item => item.slug === slug) ?? publishedPage;
+  const navigation = adminPages ?? publishedNavigation;
   if (!page || page.slug === "introduction") notFound();
 
   return (
     <CoursePage
-      page={canViewCourseLessons(access) ? page : { ...page, content: [] }}
+      page={canEdit || canViewCourseLessons(access) ? page : { ...page, content: [], blocks: [], mainVideo: null }}
       access={access}
       navigation={navigation}
       canEdit={adminAccess.status === "authorized"}

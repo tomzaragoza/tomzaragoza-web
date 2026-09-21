@@ -1,3 +1,5 @@
+import type { CourseBlock } from "./course-blocks";
+
 export type CourseTextLink = {
   label: string;
   href: string;
@@ -43,12 +45,21 @@ export type CoursePageDefinition = {
 };
 
 export type CoursePageRecord = Omit<CoursePageDefinition, "path" | "content"> & {
+  pageKind?: "page" | "group";
+  parentSlug?: string | null;
   slug: string;
   path: string;
   content: readonly (CourseContentSection & { id: string })[];
+  blocks?: CourseBlock[];
+  mainVideo?: CourseVideo | null;
+  revision?: number;
+  hasDraft?: boolean;
+  isPublished?: boolean;
 };
 
 export type CourseNavigationItem = {
+  pageKind?: "page" | "group";
+  parentSlug?: string | null;
   slug: string;
   path: string;
   title: string;

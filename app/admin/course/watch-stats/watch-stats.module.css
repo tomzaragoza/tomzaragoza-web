@@ -1,0 +1,13 @@
+.filter { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 36px; }
+.filter select, .filter button { min-height: 40px; padding: 8px 12px; color: var(--foreground); background: var(--panel); border: 1px solid var(--border); border-radius: 6px; }
+.filter select { max-width: 100%; }
+.video { padding: 24px 0; border-top: 1px solid var(--border); }
+.video h3 { margin: 0; font-size: 18px; font-weight: 500; }
+.video p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+.tableScroll { overflow-x: auto; }
+.tableScroll table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+.tableScroll th, .tableScroll td { padding: 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.tableScroll th { font-weight: 500; }
+.tableScroll th span { display: block; margin-top: 4px; color: var(--muted); font-weight: 400; }
+.video li { margin-block: 10px; font-size: 14px; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

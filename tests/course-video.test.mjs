@@ -26,3 +26,10 @@ test("course videos reject unsafe or malformed URLs", () => {
   assert.equal(getCourseVideoSource("http://example.com/lesson.mp4"), null);
   assert.equal(getCourseVideoSource("https://evilyoutube.com/watch?v=abc123")?.kind, "file");
 });
+
+test("private course videos use permanent authenticated media routes", () => {
+  const url = "/api/course/media/11111111-1111-4111-8111-111111111111";
+  assert.deepEqual(getCourseVideoSource(url), { kind: "file", src: url });
+  assert.equal(getCourseVideoSource("/api/course/media/../../admin"), null);
+  assert.equal(getCourseVideoSource("/other/file.mp4"), null);
+});

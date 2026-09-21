@@ -7,6 +7,7 @@ import {
   type CourseAnnotationTarget
 } from "@/lib/course-annotations";
 import { getCoursePageBySlug } from "@/lib/course-content";
+import { courseBlockText, flattenCourseBlocks } from "@/lib/course-blocks";
 import type { CourseParagraph } from "@/lib/course-content-shared";
 import { getCourseMessagingUser } from "@/lib/course-messages";
 
@@ -14,9 +15,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const pageSlugSchema = z.string().min(1).max(80).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
-const blockIdSchema = z.string().min(1).max(160).regex(
-  /^[a-zA-Z0-9_-]+:(?:heading|paragraph:\d+|step:\d+|item:\d+)$/
-);
+const blockIdSchema = z.string().min(1).max(160).regex(/^[a-zA-Z0-9_:-]+$/);
 
 const createSchema = z.object({
   action: z.literal("create"),
@@ -53,6 +52,19 @@ async function getAnnotationTarget(
   const page = await getCoursePageBySlug(pageSlug);
   if (!page) return null;
 
+  if (page.blocks || blockId === "main-video") {
+    const blocks = flattenCourseBlocks(page.blocks ?? []);
+    const block = blocks.find(item => item.id === blockId);
+    const context = blockId === "main-video" && page.mainVideo
+      ? page.mainVideo.title || "Main video"
+      : block ? courseBlockText(block) : "";
+    const normalizedContext = normalizeText(context);
+    if (!normalizedContext) return null;
+    const quote = rawQuote ? normalizeText(rawQuote) : null;
+    if (quote && !normalizedContext.includes(quote)) return null;
+    const heading = blocks.slice(0, blocks.findIndex(item => item.id === blockId) + 1).findLast(item => item.type === "heading");
+    return { pageTitle: page.title, sectionId: blockId.split(":")[0], sectionHeading: heading ? courseBlockText(heading) : page.title, blockId, context: normalizedContext, quote };
+  }
   const separator = blockId.indexOf(":");
   const sectionId = blockId.slice(0, separator);
   const blockPath = blockId.slice(separator + 1);

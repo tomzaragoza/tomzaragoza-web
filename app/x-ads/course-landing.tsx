@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDown, ArrowUpRight, Check } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpRight, Check } from "lucide-react";
 import { AuthControls } from "@/app/components/auth-controls";
 import type { CourseNavigationItem } from "@/lib/course-content-shared";
 import type { PricingTier } from "@/lib/pricing-parity";
@@ -23,14 +23,12 @@ export function CourseLanding({ navigation, purchaseStatus }: {
     <div className={`${courseStyles.page} ${styles.page}`}>
       <a className={styles.skipLink} href="#main">Skip to content</a>
       <header className={styles.header}>
-        <Link href="/x-ads" className={styles.brand} aria-label="X Ads course home">
+        <Link href="/x-ads" className={styles.brand} aria-label="Learn X Ads home">
           <Image className={styles.brandMark} src="/images/tom-zaragoza.jpg" width={32} height={32} alt="Tom Zaragoza" />
-          <span>X Ads<span className={styles.brandSuffix}> / by Tom Zaragoza</span></span>
+          <span>Learn X Ads<span className={styles.brandSuffix}> / by Tom Zaragoza</span></span>
         </Link>
         <nav aria-label="Main navigation" className={styles.navigation}>
-          <a href="#curriculum">The course</a>
-          <a href="#presale">Pricing</a>
-          <Link className={styles.headerSignIn} href="/sign-in?returnPath=%2Fx-ads">Sign in <ArrowUpRight aria-hidden="true" /></Link>
+          <a className={styles.headerBuy} href="#presale">Buy Full Access <ArrowRight aria-hidden="true" /></a>
         </nav>
       </header>
 
@@ -44,17 +42,13 @@ export function CourseLanding({ navigation, purchaseStatus }: {
         ) : null}
         <section className={styles.hero} aria-labelledby="hero-title">
           <div className={styles.heroCopy}>
-            <h1 id="hero-title">Learn X Ads.<br />Find your next <span>customers.</span></h1>
+            <h1 id="hero-title">Learn how to find customers <span>with X Ads</span></h1>
             <p className={styles.description}>A practical X Ads course for founders who have built a product and want more people to use it. Set up, launch, and improve your ads, step by step.</p>
             <div className={styles.heroActions}>
               <div className={styles.googleAction}><AuthControls signInOnly returnPath="/x-ads" /></div>
               <a href="#curriculum" className={styles.textLink}>Explore the course <ArrowDown aria-hidden="true" /></a>
             </div>
             <p className={styles.accessNote}>{isXAdsPresaleActive(initialNow) ? "Lessons launch September 30. Presale is open." : "Sign in to view your account and course access."}</p>
-            <div className={styles.author}>
-              <Image src="/images/tom-zaragoza.jpg" width={38} height={38} alt="Tom Zaragoza" />
-              <p>Built and taught by Tom Zaragoza.<br /><span>Running X Ads since 2019.</span></p>
-            </div>
           </div>
           <LandingVideo />
         </section>
@@ -105,7 +99,6 @@ export function CourseLanding({ navigation, purchaseStatus }: {
       </main>
       <footer className={styles.footer}>
         <Link href="/">Tom Zaragoza</Link>
-        <p>Built for people building things.</p>
         <div><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link></div>
       </footer>
     </div>

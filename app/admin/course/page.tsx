@@ -22,9 +22,10 @@ export default async function CourseAdminPage() {
         <div>
           <Link href="/admin">Admin</Link>
           <h1>Course CMS</h1>
-          <p>Create course pages here. Open any page to edit its content in place.</p>
+          <p>Create groups and pages. Open any page to edit its content.</p>
         </div>
         <div className={styles.headerActions}>
+          <Link href="/admin/course/watch-stats">Watch stats</Link>
           <Link href="/admin/course/messages">Messages</Link>
           <Link href="/x-ads">View course</Link>
         </div>

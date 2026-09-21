@@ -12,6 +12,7 @@ function safeUrl(value: string) {
 }
 
 export function getCourseVideoSource(value: string): CourseVideoSource | null {
+  if (/^\/api\/course\/media\/[a-f0-9-]{36}$/.test(value)) return { kind: "file", src: value };
   const url = safeUrl(value);
 
   if (!url) return null;

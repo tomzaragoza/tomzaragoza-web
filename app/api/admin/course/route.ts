@@ -2,8 +2,11 @@ import { revalidatePath } from "next/cache";
 import { courseAdminErrorResponse, getCourseAdminAccess } from "@/lib/course-admin";
 import {
   createCoursePage,
+  saveCourseDraft,
+  publishCoursePage,
   getAdminCoursePages,
   reorderCoursePages,
+  saveCourseStructure,
   saveCoursePage,
   updateCoursePageContent,
   updateCoursePageDetails
@@ -25,6 +28,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  if (request.headers.get("origin") && request.headers.get("origin") !== new URL(request.url).origin) return Response.json({ error: "Invalid request origin." }, { status: 403 });
   const access = await getCourseAdminAccess(request.headers);
   if (access.status !== "authorized") return courseAdminErrorResponse(access);
 
@@ -40,6 +44,7 @@ export async function POST(request: Request) {
 }
 
 export async function PUT(request: Request) {
+  if (request.headers.get("origin") && request.headers.get("origin") !== new URL(request.url).origin) return Response.json({ error: "Invalid request origin." }, { status: 403 });
   const access = await getCourseAdminAccess(request.headers);
   if (access.status !== "authorized") return courseAdminErrorResponse(access);
 
@@ -55,18 +60,23 @@ export async function PUT(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+  if (request.headers.get("origin") && request.headers.get("origin") !== new URL(request.url).origin) return Response.json({ error: "Invalid request origin." }, { status: 403 });
   const access = await getCourseAdminAccess(request.headers);
   if (access.status !== "authorized") return courseAdminErrorResponse(access);
 
   try {
     const body = await request.json();
-    if (body.kind === "order") {
-      const pages = await reorderCoursePages(body);
-      revalidatePath("/x-ads");
+    if (body.kind === "order" || body.kind === "structure") {
+      const pages = body.kind === "structure" ? await saveCourseStructure(body) : await reorderCoursePages(body);
+      revalidatePath("/x-ads", "layout");
       return Response.json({ pages });
     }
 
-    const page = body.kind === "details"
+    const page = body.kind === "draft"
+      ? await saveCourseDraft(body)
+      : body.kind === "publish"
+        ? await publishCoursePage(body)
+        : body.kind === "details"
       ? await updateCoursePageDetails(body)
       : body.kind === "content"
         ? await updateCoursePageContent(body)

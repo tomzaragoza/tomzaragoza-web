@@ -96,6 +96,7 @@ export function CourseMessageInbox({
       setThreads((current) => current.map((thread) =>
         threadKey(thread) === key ? payload.thread as AdminCourseThread : thread
       ));
+      window.dispatchEvent(new Event("course-message-read"));
     }).catch(() => {
       if (controller.signal.aborted) return;
     });

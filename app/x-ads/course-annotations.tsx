@@ -16,6 +16,7 @@ import type {
   CourseThreadMessage,
   PrivateCourseAnnotationThread
 } from "@/lib/course-messages-shared";
+import { useCourseEditing } from "./course-editing-context";
 import styles from "./x-ads.module.css";
 
 type AnnotationDraft = {
@@ -95,23 +96,27 @@ function ThreadMessages({
 
 export function CourseAnnotations({
   pageSlug,
-  children
+  children,
+  blockIds
 }: {
   pageSlug: string;
   children: ReactNode;
+  blockIds?: string[];
 }) {
+  const { preview } = useCourseEditing();
   const [threads, setThreads] = useState<PrivateCourseAnnotationThread[]>([]);
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [draft, setDraft] = useState<AnnotationDraft | null>(null);
   const [draftBody, setDraftBody] = useState("");
   const [replyBody, setReplyBody] = useState<Record<string, string>>({});
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!preview);
   const [isSending, setIsSending] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (preview) return;
     const controller = new AbortController();
     const query = new URLSearchParams({ pageSlug });
 
@@ -132,7 +137,7 @@ export function CourseAnnotations({
       });
 
     return () => controller.abort();
-  }, [pageSlug]);
+  }, [pageSlug, preview]);
 
   const blockThreads = useMemo(
     () => activeBlockId
@@ -196,7 +201,7 @@ export function CourseAnnotations({
   async function createThread(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const body = draftBody.trim();
-    if (!draft || !body) return;
+    if (preview || !draft || !body) return;
 
     setIsSending(true);
     setError("");
@@ -233,7 +238,7 @@ export function CourseAnnotations({
   ) {
     event.preventDefault();
     const body = replyBody[thread.id]?.trim();
-    if (!body) return;
+    if (preview || !body) return;
 
     setIsSending(true);
     setError("");
@@ -308,7 +313,12 @@ export function CourseAnnotations({
   return (
     <AnnotationContext.Provider value={contextValue}>
       <div className={styles.annotationLayout}>
-        <div className={styles.annotationLesson}>{children}</div>
+        <div className={styles.annotationLesson}>{children}
+          {blockIds && threads.some(thread => !blockIds.includes(thread.blockId)) && <details>
+            <summary>Comments on removed content</summary>
+            {threads.filter(thread => !blockIds.includes(thread.blockId)).map(thread => <p key={thread.id}><button type="button" onClick={() => openBlock(thread.blockId)}>Content removed: {thread.quote || thread.context}</button></p>)}
+          </details>}
+        </div>
         <aside
           className={`${styles.annotationRail} ${activeBlockId ? styles.annotationRailOpen : ""}`}
           aria-label="Inline course comments"
@@ -316,7 +326,7 @@ export function CourseAnnotations({
           {activeBlockId ? (
             <div className={styles.annotationRailInner}>
               <header className={styles.annotationRailHeader}>
-                <span>Add a comment</span>
+                <span>{blockIds && !blockIds.includes(activeBlockId) ? "Content removed" : "Private comments"}</span>
                 <button
                   type="button"
                   aria-label="Close comments"
@@ -329,6 +339,8 @@ export function CourseAnnotations({
                   <X aria-hidden="true" />
                 </button>
               </header>
+
+              {(!blockIds || blockIds.includes(activeBlockId)) && !draft && <button type="button" onClick={() => startComment(activeBlockId, null)}>New thread</button>}
 
               {blockThreads.map((thread) => {
                 const isExpanded = expandedId === thread.id;
@@ -393,8 +405,8 @@ export function CourseAnnotations({
                     disabled={isSending}
                   />
                   <div>
-                    <small>Private between you and Tom.</small>
-                    <button type="submit" disabled={isSending || !draftBody.trim()}>
+                    <small>{preview ? "Preview only. Comments are not sent." : "Private between you and Tom."}</small>
+                    <button type="submit" disabled={preview || isSending || !draftBody.trim()}>
                       {isSending ? "Sending…" : "Comment"}
                     </button>
                   </div>
@@ -412,7 +424,7 @@ export function CourseAnnotations({
 }
 
 type AnnotationBlockProps = {
-  as: "h2" | "p" | "li";
+  as: "h2" | "p" | "li" | "div";
   blockId?: string;
   children: ReactNode;
   className?: string;
@@ -474,7 +486,7 @@ export function AnnotationBlock({
 
   const markerLabel = blockThreads.length > 0
     ? `Open ${blockThreads.length} private comment ${blockThreads.length === 1 ? "thread" : "threads"}`
-    : "Comment on this text";
+    : "Comment on this block";
 
   return (
     <Element

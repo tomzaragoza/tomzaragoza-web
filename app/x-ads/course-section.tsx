@@ -111,7 +111,7 @@ export function CourseSectionContent({
               )}
         </AnnotationBlock>
       ))}
-      {section.video ? <CourseVideo video={section.video} /> : null}
+      {section.video ? <CourseVideo video={section.video} pageSlug={pageSlug} videoId={blockId("video")} /> : null}
       {section.steps ? (
         <ol className={styles.setupSteps}>
           {section.steps.map((step, stepIndex) => (

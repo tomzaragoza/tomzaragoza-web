@@ -20,6 +20,8 @@
   margin: 0;
 }
 
+.emptyState > a { margin-top: 24px; }
+
 .header h1 {
   font-size: clamp(1.5rem, 2.5vw, 2rem);
   font-weight: 400;
@@ -99,8 +101,8 @@
 }
 
 .unreadDotVisible {
-  background: #36a58c;
-  box-shadow: 0 0 0 3px rgb(54 165 140 / 12%);
+  background: #439bec;
+  box-shadow: 0 0 0 3px rgb(67 155 236 / 12%);
 }
 
 .conversation {
@@ -143,7 +145,7 @@
 .contextCard blockquote {
   margin: 0;
   padding-left: 10px;
-  border-left: 2px solid #36a58c;
+  border-left: 2px solid #439bec;
   color: var(--course-text);
   font-size: 12px;
   line-height: 1.55;
@@ -242,10 +244,10 @@
 .replyForm button {
   min-height: 32px;
   padding: 5px 12px;
-  border: 1px solid #36a58c;
+  border: 1px solid #439bec;
   border-radius: 6px;
   color: var(--course-text);
-  background: #007f66;
+  background: #176db9;
   font: inherit;
   font-size: 11px;
 }

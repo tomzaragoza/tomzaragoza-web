@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import type { CourseThreadMessage, PrivateCourseThread } from "@/lib/course-messages-shared";
+import { useCourseEditing } from "./course-editing-context";
 import styles from "./x-ads.module.css";
 
 function formatMessageTime(value: string) {
@@ -27,6 +28,7 @@ export function CourseNoteThread({
   pageSlug?: string;
   sectionId?: string;
 }) {
+  const { preview } = useCourseEditing();
   const canMessage = Boolean(pageSlug && sectionId);
   const [messages, setMessages] = useState<CourseThreadMessage[]>([]);
   const [participant, setParticipant] = useState<PrivateCourseThread["participant"]>({
@@ -36,14 +38,14 @@ export function CourseNoteThread({
   const [draft, setDraft] = useState("");
   const [threadId, setThreadId] = useState<string | null>(null);
   const [unread, setUnread] = useState(false);
-  const [isLoading, setIsLoading] = useState(canMessage);
+  const [isLoading, setIsLoading] = useState(canMessage && !preview);
   const [isSending, setIsSending] = useState(false);
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const noteRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (!pageSlug || !sectionId) return;
+    if (preview || !pageSlug || !sectionId) return;
 
     const controller = new AbortController();
     const query = new URLSearchParams({ pageSlug, sectionId });
@@ -68,7 +70,7 @@ export function CourseNoteThread({
       });
 
     return () => controller.abort();
-  }, [pageSlug, sectionId]);
+  }, [pageSlug, sectionId, preview]);
 
   useEffect(() => {
     if (!threadId || !unread || !noteRef.current) return;
@@ -92,7 +94,7 @@ export function CourseNoteThread({
   async function sendMessage(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const body = draft.trim();
-    if (!body || !pageSlug || !sectionId) return;
+    if (preview || !body || !pageSlug || !sectionId) return;
 
     setIsSending(true);
     setError("");
@@ -181,8 +183,8 @@ export function CourseNoteThread({
               disabled={isLoading || isSending}
             />
             <div className={styles.lessonReplyFooter}>
-              <small>Private between you and Tom.</small>
-              <button type="submit" disabled={isLoading || isSending || !draft.trim()}>
+              <small>{preview ? "Preview only. Comments are not sent." : "Private between you and Tom."}</small>
+              <button type="submit" disabled={preview || isLoading || isSending || !draft.trim()}>
                 {isLoading ? "Loading…" : isSending ? "Sending…" : "Send"}
               </button>
             </div>

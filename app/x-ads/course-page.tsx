@@ -1,15 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChartNoAxesCombined, Eye, MousePointer2, Target } from "lucide-react";
+import { ChartNoAxesCombined, Eye, MousePointer2 } from "lucide-react";
 import type { CourseAccess } from "@/lib/course-access";
 import { canViewCourseLessons } from "@/lib/course-access-policy";
 import type { CourseNavigationItem, CoursePageRecord } from "@/lib/course-content-shared";
 import type { PricingTier } from "@/lib/pricing-parity";
 import { isXAdsPresaleActive } from "@/lib/x-ads-offer";
-import { CourseAnnotations } from "./course-annotations";
-import { CourseSectionContent } from "./course-section";
+import { CourseEditingProvider } from "./course-editing-context";
+import { CourseLessonHeader, CourseLessonBody } from "./course-lesson";
 import { CourseSidebar } from "./course-sidebar";
-import { InlineCourseEditor, InlineCourseHeader } from "./inline-course-editor";
+import { InlineCourseEditor } from "./inline-course-editor";
 import { MobileCourseNav } from "./mobile-course-nav";
 import { PresaleCheckout } from "./presale-checkout";
 import styles from "./x-ads.module.css";
@@ -65,7 +65,6 @@ export function CoursePage({
   purchaseStatus?: PricingTier | "error" | null;
 }) {
   const isIntroduction = page.path === "/x-ads";
-  const isPrinciples = page.path === "/x-ads/principles";
   const hasCourseAccess = access !== "public" && canViewCourseLessons(access);
   const hasMessaging = hasCourseAccess;
   const confirmedPurchaseStatus = purchaseStatus === "pro"
@@ -80,7 +79,7 @@ export function CoursePage({
   const previousPage = currentPageIndex > 0 ? navigation[currentPageIndex - 1] : undefined;
   const nextPage = currentPageIndex >= 0 ? navigation[currentPageIndex + 1] : undefined;
 
-  return (
+  const content = (
     <main className={styles.page}>
       <a className={styles.skipLink} href="#course-content">
         Skip to course content
@@ -103,10 +102,10 @@ export function CoursePage({
           showAccountControls={access !== "signed-out" && access !== "public"}
         />
 
-        <article className={styles.content} id="course-content">
+        <article className={`${styles.content} ${canEdit && !isIntroduction ? styles.editorContent : ""} ${hasMessaging && !isIntroduction && !canEdit ? styles.annotatedContent : ""}`} id="course-content">
           {canEdit && !isIntroduction ? (
-            <InlineCourseHeader page={page} />
-          ) : (
+            null
+          ) : !isIntroduction ? <CourseLessonHeader page={page} /> : (
             <header className={styles.pageHeader}>
               <h1>{page.title}</h1>
               {isIntroduction ? (
@@ -117,20 +116,15 @@ export function CoursePage({
                   <span className={styles.inlineOutcome}><ChartNoAxesCombined aria-hidden="true" /> conversions</span>{" "}
                   for your product in less than 1 hour.
                 </p>
-              ) : (
-                <div className={styles.outcomeCard}>
-                  <Target aria-hidden="true" />
-                  <p>{page.outcome ?? page.description}</p>
-                </div>
-              )}
+              ) : null}
             </header>
           )}
 
-          <div className={`${styles.mainContent} ${isIntroduction ? styles.introductionContent : ""} ${
+          <div className={`${styles.mainContent} ${!isIntroduction && !hasCourseAccess && !canEdit ? styles.gatedMainContent : ""} ${isIntroduction ? styles.introductionContent : ""} ${canEdit && !isIntroduction ? styles.editorMainContent : ""} ${
             hasMessaging && !isIntroduction && !canEdit ? styles.annotatedMainContent : ""
           }`}>
             {canEdit && !isIntroduction ? (
-              <InlineCourseEditor page={page} isPrinciples={isPrinciples} />
+              <InlineCourseEditor key={page.slug} page={page} />
             ) : isIntroduction ? (
               <section className={styles.salesCopy}>
                 {confirmedPurchaseStatus && (purchaseStatus === "course" || purchaseStatus === "pro") ? (
@@ -214,40 +208,7 @@ export function CoursePage({
                 </section>
               </section>
             ) : hasCourseAccess ? (
-              hasMessaging ? (
-                <CourseAnnotations pageSlug={page.slug}>
-                  <div className={styles.lessonContent}>
-                    {page.content.map((section, index) => (
-                      <section
-                        className={`${styles.contentSection} ${isPrinciples ? styles.principleSection : ""}`}
-                        key={section.id ?? index}
-                      >
-                        <CourseSectionContent
-                          section={section}
-                          index={index}
-                          isPrinciples={isPrinciples}
-                          pageSlug={page.slug}
-                        />
-                      </section>
-                    ))}
-                  </div>
-                </CourseAnnotations>
-              ) : (
-                <div className={styles.lessonContent}>
-                  {page.content.map((section, index) => (
-                    <section
-                      className={`${styles.contentSection} ${isPrinciples ? styles.principleSection : ""}`}
-                      key={section.id ?? index}
-                    >
-                      <CourseSectionContent
-                        section={section}
-                        index={index}
-                        isPrinciples={isPrinciples}
-                      />
-                    </section>
-                  ))}
-                </div>
-              )
+              <CourseLessonBody page={page} />
             ) : (
               <CourseAccessGate
                 access={access === "public" ? "signed-out" : access}
@@ -263,7 +224,7 @@ export function CoursePage({
                 <Link className={styles.courseFooterLink} href={previousPage.path}>
                   <span>← Previous</span>
                   <strong>
-                    {previousPage.path === "/x-ads" ? "Introduction" : previousPage.title}
+                    {previousPage.path === "/x-ads" ? "Overview" : previousPage.title}
                   </strong>
                 </Link>
               ) : null}
@@ -282,4 +243,5 @@ export function CoursePage({
       </div>
     </main>
   );
+  return canEdit && !isIntroduction ? <CourseEditingProvider>{content}</CourseEditingProvider> : content;
 }

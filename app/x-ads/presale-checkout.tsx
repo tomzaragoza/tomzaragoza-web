@@ -170,10 +170,14 @@ export function PresaleCheckout({
     return (
       <>
         <div className={styles.gateOffers} aria-label="Choose a course plan">
-          {plans.filter((plan) => tiers.includes(plan.tier)).flatMap((plan) => [
-            checkoutForm(plan.tier, "stripe", true),
-            checkoutForm(plan.tier, "paypal", true)
-          ])}
+          {plans.filter((plan) => tiers.includes(plan.tier)).map((plan) => (
+            <section className={styles.gatePlan} key={plan.tier} aria-label={plan.name}>
+              <h3>{plan.name}</h3>
+              <p>{plan.description}</p>
+              {checkoutForm(plan.tier, "stripe", true)}
+              {checkoutForm(plan.tier, "paypal", true)}
+            </section>
+          ))}
         </div>
         {error ? <p className={styles.checkoutError} role="alert">{error}</p> : null}
       </>
@@ -210,6 +214,7 @@ export function PresaleCheckout({
       <div className={styles.pricingPlans} aria-label="Choose a course plan">
         {plans.filter((plan) => tiers.includes(plan.tier)).map((plan) => (
           <article
+            id={`${plan.tier}-plan`}
             className={`${styles.pricingPlan} ${plan.tier === "pro" ? styles.proPricingPlan : ""}`}
             key={plan.tier}
           >

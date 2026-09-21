@@ -179,8 +179,8 @@
 }
 
 .unreadDotVisible {
-  background: #36a58c;
-  box-shadow: 0 0 0 3px rgb(54 165 140 / 12%);
+  background: #439bec;
+  box-shadow: 0 0 0 3px rgb(67 155 236 / 12%);
 }
 
 .conversation {
@@ -220,7 +220,7 @@
 .contextCard blockquote {
   margin: 8px 0 0;
   padding-left: 10px;
-  border-left: 2px solid #36a58c;
+  border-left: 2px solid #439bec;
   color: var(--text);
   font-size: 13px;
   line-height: 1.55;
@@ -330,7 +330,7 @@
   margin-top: 8px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
   .shell {
     width: min(calc(100% - 36px), 42rem);
     padding-top: 28px;

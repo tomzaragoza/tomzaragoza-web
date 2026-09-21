@@ -11,6 +11,13 @@
     "test:auth": "node --conditions=react-server --test tests/*.test.mjs"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1136.0",
+    "@aws-sdk/s3-request-presigner": "^3.1136.0",
+    "@blocknote/core": "^0.54.2",
+    "@blocknote/mantine": "^0.54.2",
+    "@blocknote/react": "^0.54.2",
+    "@mantine/core": "^9.6.1",
+    "@mantine/hooks": "^9.6.1",
     "@modelcontextprotocol/sdk": "1.29.0",
     "better-auth": "^1.7.4",
     "lucide-react": "^1.46.0",
