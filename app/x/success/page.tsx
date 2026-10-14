@@ -38,7 +38,7 @@ export default async function XAdsSuccessPage({ searchParams }: {
         {purchase ? (
           <>
             <PurchasePixelEvent data={getXAdsPurchasePixelData(purchase)} />
-            <p>Your X Ads Course presale purchase is confirmed.</p>
+            <p>Your X Ads Course purchase is confirmed.</p>
             <p>When you sign in to access the course, use the same email address you entered at checkout.</p>
           </>
         ) : (

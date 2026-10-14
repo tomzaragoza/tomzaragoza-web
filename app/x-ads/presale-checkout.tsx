@@ -20,35 +20,28 @@ const plans: Array<{
   {
     tier: "course",
     name: "Course",
-    description: "Get access to only the course content when it launches!",
-    features: ["Course lessons when they launch", "Future course updates"]
+    description: "Step-by-step X Ads lessons, from account setup to campaign improvement.",
+    features: [
+      "Step-by-step course lessons",
+      "Account setup, analytics, and conversion tracking",
+      "Creating, launching, and improving your campaigns",
+      "Future course updates included"
+    ]
   },
   {
     tier: "pro",
     name: "Pro",
-    description: "Get the course, in-course messaging, and a consultation with Tom.",
+    description: "Get the complete course plus a 30-minute consultation with Tom.",
     features: [
-      "Course access when it launches",
-      "In-course messaging for questions about the course",
-      "One 30-minute consultation"
+      "Everything in Course, including future updates",
+      "One 30-minute consultation with Tom"
     ]
   }
 ];
 
 type PaymentMethod = "stripe" | "paypal";
 
-function countdownParts(now: number) {
-  const seconds = Math.max(0, Math.floor((xAdsPresaleEndsAt - now) / 1000));
-  return [
-    { label: "days", value: Math.floor(seconds / 86400) },
-    { label: "hours", value: Math.floor((seconds % 86400) / 3600) },
-    { label: "minutes", value: Math.floor((seconds % 3600) / 60) },
-    { label: "seconds", value: seconds % 60 }
-  ];
-}
-
-function trackCheckout(tier: PricingTier, unitAmount: number) {
-  const eventId = process.env.NEXT_PUBLIC_X_CHECKOUT_EVENT_ID?.trim() || "tw-o6ml8-rfgj8";
+function trackCheckout() {
   const pixel = (window as Window & {
     twq?: (...args: unknown[]) => void;
   }).twq;
@@ -56,16 +49,7 @@ function trackCheckout(tier: PricingTier, unitAmount: number) {
   if (!pixel) return;
 
   try {
-    pixel("event", eventId, {
-      value: unitAmount / 100,
-      currency: "USD",
-      contents: [{
-        content_id: `x-ads-${tier}`,
-        content_name: tier === "pro" ? "X Ads Course Pro" : "X Ads Course",
-        content_price: unitAmount / 100,
-        num_items: 1
-      }]
-    });
+    pixel("event", "tw-o6ml8-rfgj8", {});
   } catch {
     // Pixel errors must not prevent checkout.
   }
@@ -75,17 +59,21 @@ export function PresaleCheckout({
   returnPath,
   initialNow,
   tiers = ["course", "pro"],
-  compact = false
+  compact = false,
+  layout = "plans"
 }: {
   returnPath: string;
   initialNow: number;
   tiers?: readonly PricingTier[];
   compact?: boolean;
+  layout?: "plans" | "sidebar";
 }) {
   const [now, setNow] = useState(initialNow);
   const [pending, setPending] = useState<{ tier: PricingTier; method: PaymentMethod } | null>(null);
   const [error, setError] = useState("");
+  const [selectedTier, setSelectedTier] = useState<PricingTier>(tiers[0] ?? "course");
   const presale = isXAdsPresaleActive(now);
+  const sidebar = layout === "sidebar";
 
   useEffect(() => {
     const firstTick = window.setTimeout(() => setNow(Date.now()), 0);
@@ -101,7 +89,7 @@ export function PresaleCheckout({
     if (pending) return;
 
     const displayedAmount = getXAdsPrice(tier, now);
-    trackCheckout(tier, displayedAmount);
+    trackCheckout();
     const minimumLoadingTime = new Promise<void>((resolve) => window.setTimeout(resolve, 1000));
     setPending({ tier, method });
     setError("");
@@ -186,33 +174,21 @@ export function PresaleCheckout({
 
   return (
     <section className={styles.presaleSection} id="presale" aria-labelledby="presale-title">
-      <h2 id="presale-title">
-        {presale ? "Get the course presale" : "The presale has ended"}
-      </h2>
-      {presale ? (
-        <>
-          <p>I&apos;m currently developing the course and recording video lessons.</p>
-          <p>
-            Presale ends October 16th. Prices go up after that date, so buy the
-            presale to get it at a discount!
-          </p>
-        </>
-      ) : (
-        <p>The presale has ended. Course and Pro now cost their regular prices.</p>
-      )}
-      {presale ? (
-        <div className={styles.presaleCountdown} role="timer" aria-label="Time until presale ends">
-          {countdownParts(now).map((part) => (
-            <div key={part.label}>
-              <strong>{String(part.value).padStart(2, "0")}</strong>
-              <span>{part.label}</span>
-            </div>
+      <h2 id="presale-title">Get the course</h2>
+      <p>Learn to find customers with X Ads. Choose the course on its own, or add a consultation with Tom.</p>
+      {sidebar ? (
+        <fieldset className={styles.planSelector} disabled={pending !== null}>
+          <legend className={styles.visuallyHidden}>Choose a course plan</legend>
+          {plans.filter((plan) => tiers.includes(plan.tier)).map((plan) => (
+            <label key={plan.tier}>
+              <input type="radio" name="course-plan" value={plan.tier} checked={selectedTier === plan.tier} onChange={() => setSelectedTier(plan.tier)} />
+              <span>{plan.name}<small>{formatXAdsPrice(getXAdsPrice(plan.tier, now))} USD</small></span>
+            </label>
           ))}
-        </div>
+        </fieldset>
       ) : null}
-      {presale ? <p className={styles.presaleDeadline}>Presale ends October 16, 2026 at 11:59 p.m. ET.</p> : null}
       <div className={styles.pricingPlans} aria-label="Choose a course plan">
-        {plans.filter((plan) => tiers.includes(plan.tier)).map((plan) => (
+        {plans.filter((plan) => tiers.includes(plan.tier) && (!sidebar || plan.tier === selectedTier)).map((plan) => (
           <article
             id={`${plan.tier}-plan`}
             className={`${styles.pricingPlan} ${plan.tier === "pro" ? styles.proPricingPlan : ""}`}
@@ -223,10 +199,10 @@ export function PresaleCheckout({
               <p>
                 {presale ? <del>{formatXAdsPrice(getXAdsRegularPrice(plan.tier))}</del> : null}
                 <strong>{formatXAdsPrice(getXAdsPrice(plan.tier, now))}</strong>
-                <span> USD</span>
+                <span> USD{sidebar ? " · one-time" : ""}</span>
               </p>
             </div>
-            <p className={styles.pricingPlanDescription}>{plan.description}</p>
+            {!sidebar ? <p className={styles.pricingPlanDescription}>{plan.description}</p> : null}
             <ul>{plan.features.map((feature) => <li key={feature}>{feature}</li>)}</ul>
             {checkoutForm(plan.tier, "stripe")}
             {checkoutForm(plan.tier, "paypal")}

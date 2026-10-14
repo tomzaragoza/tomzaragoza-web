@@ -43,12 +43,15 @@ price is $99 USD, reduced from $198 USD. The presale ends on October 16,
 their regular amounts at that time. Both plans use fixed USD prices in every
 region. The previous PostHog regional pricing flag is not used for this offer.
 
-Pro includes the course,
-in-course messaging when the course opens, and one 30-minute consultation.
-A purchase records access for the later course launch. During the presale,
-only `tomdzaragoza@gmail.com` and `todazar@gmail.com` can read lessons or
-lesson discussions. Other customers
-see a purchase confirmation and cannot read lessons yet.
+Pro includes the course and one 30-minute consultation with Tom.
+Course and Pro customers can read published lessons after signing in with
+their purchase email. Complimentary accounts retain lesson access.
+Users without a purchase cannot read lesson content or private course media.
+After sign-in, `/x-ads` opens the first course section. The sidebar lists
+sections and their child pages. Each section shows its video and written
+lesson in the main content area. The customer reader has no messaging or
+ad-library navigation. Existing private conversations remain stored, with
+the administration interface available to Tom.
 
 Checkout does not require sign-in. Stripe collects an email address from guest
 buyers. Stripe redirects through `/api/stripe/checkout/success`, which places
@@ -73,11 +76,12 @@ offer period in Checkout metadata.
 The X Ads base pixel uses ID `o6ml8` on every page. The checkout event uses
 `tw-o6ml8-rfgj8` when a visitor submits any Course or Pro buy button. The purchase event
 uses `tw-o6ml8-rfgj9` on `/x-ads/checkout-complete` after Stripe confirms
-payment. The checkout event includes the selected price and currency. The
+payment. The checkout event sends an empty data object. The
 Purchase event includes the Stripe checkout email, paid amount, currency,
 and a hashed Checkout Session ID as its conversion ID. A browser session sends
-that event once per purchase. Set the `NEXT_PUBLIC_X_*` values before building
-only if you need different IDs. Use X Pixel Helper and Events Manager to verify
+that event once per purchase. Both event IDs are fixed in the application.
+The purchase email comes from Stripe's `customer_details.email`, with
+`customer_email` as a fallback. Use X Pixel Helper and Events Manager to verify
 the live events.
 
 The Course Payment Link `plink_1ULCVcLq4cPFl2NmpDfdZMqk` redirects to

@@ -375,6 +375,12 @@
   overflow: visible;
 }
 
+.mainContent.readerMainContent {
+  display: block;
+  min-height: 0;
+  padding: 0 0 32px;
+}
+
 .annotationLayout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -902,43 +908,6 @@
   max-width: 38rem;
 }
 
-.presaleCountdown {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-  max-width: 32rem;
-  margin-top: 24px;
-}
-
-.presaleCountdown > div {
-  display: grid;
-  gap: 4px;
-  padding: 14px 10px;
-  border: 1px solid var(--course-line);
-  border-radius: 8px;
-  background: #1b1b19;
-  text-align: center;
-}
-
-.presaleCountdown strong {
-  color: var(--course-text);
-  font-family: var(--font-mono);
-  font-size: clamp(1.25rem, 4vw, 1.75rem);
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
-
-.presaleCountdown span {
-  color: var(--course-muted);
-  font-size: 11px;
-}
-
-.salesCopy .presaleDeadline {
-  margin: 10px 0 24px;
-  color: var(--course-muted);
-  font-size: 12px;
-}
-
 .presaleSection .pricingPlans {
   margin-top: 28px;
 }
@@ -1025,6 +994,47 @@
   width: 100%;
   text-align: left;
 }
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.planSelector {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+  margin: 20px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.planSelector label {
+  display: flex;
+  align-items: start;
+  gap: 8px;
+  padding: 12px 10px;
+  border: 1px solid var(--course-line);
+  border-radius: 7px;
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.planSelector label:has(input:checked) {
+  border-color: #439bec;
+  background: #18232e;
+}
+
+.planSelector input { flex: 0 0 14px; width: 14px; height: 14px; margin: 3px 0 0; padding: 0; accent-color: #439bec; }
+.planSelector input:focus-visible { outline: 2px solid #439bec; outline-offset: 3px; }
+.planSelector small { display: block; margin-top: 5px; color: var(--course-muted); font-size: 10px; line-height: 1.5; }
 
 .pricingPlan {
   display: flex;
@@ -2581,7 +2591,7 @@
 .disclosureArrow { margin-left: auto; transition: transform 150ms ease; }
 .courseDisclosure[open] .disclosureArrow { transform: rotate(90deg); }
 .courseDisclosure summary:focus-visible { outline: 2px solid #439bec; outline-offset: 2px; }
-.courseTree { display: grid; gap: 3px; margin: 8px 0 12px 18px; padding-left: 13px; border-left: 1px solid var(--course-line); }
+.courseTree { display: grid; gap: 6px; margin: 0; padding: 0; }
 .courseTree a { padding: 7px 9px; color: var(--course-muted); border-radius: 5px; text-decoration: none; font-size: 12px; line-height: 1.5; }
 .courseTree a:hover { color: var(--course-text); background: #242424; }
 .courseTree a[aria-current="page"] { color: #92c9fb; background: #1b2c3d; }

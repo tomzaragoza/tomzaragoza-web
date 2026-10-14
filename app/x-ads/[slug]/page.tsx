@@ -5,9 +5,11 @@ import { canViewCourseLessons } from "@/lib/course-access-policy";
 import { getCourseAdminAccess } from "@/lib/course-admin";
 import { getCourseNavigation, getCoursePageBySlug, getAdminCoursePages } from "@/lib/course-content";
 import { CoursePage } from "../course-page";
+import { pricingTiers, type PricingTier } from "@/lib/pricing-parity";
 
 type CourseRouteProps = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ purchase?: string }>;
 };
 
 export const dynamic = "force-dynamic";
@@ -30,8 +32,11 @@ export async function generateMetadata({ params }: CourseRouteProps): Promise<Me
   };
 }
 
-export default async function CourseContentPage({ params }: CourseRouteProps) {
+export default async function CourseContentPage({ params, searchParams }: CourseRouteProps) {
   const { slug } = await params;
+  const { purchase } = await searchParams;
+  const purchaseStatus = purchase === "error" ? "error"
+    : pricingTiers.includes(purchase as PricingTier) ? purchase as PricingTier : null;
   const [publishedPage, publishedNavigation, access, adminAccess] = await Promise.all([
     getCoursePageBySlug(slug),
     getCourseNavigation(),
@@ -51,6 +56,7 @@ export default async function CourseContentPage({ params }: CourseRouteProps) {
       access={access}
       navigation={navigation}
       canEdit={adminAccess.status === "authorized"}
+      purchaseStatus={purchaseStatus}
     />
   );
 }

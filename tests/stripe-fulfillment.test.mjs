@@ -56,6 +56,24 @@ test("a paid purchase supplies email and value to the X event without exposing i
   assert.ok(!JSON.stringify(data).includes(purchase.checkoutSessionId));
 });
 
+test("the X purchase event uses the email collected by Stripe instead of the prefilled email", () => {
+  const purchase = paidXAdsPurchaseFromCheckout(checkoutSession({
+    customer_details: { email: " StripeBuyer@Example.com " },
+    customer_email: "prefilled@example.com"
+  }));
+  assert.ok(purchase);
+  assert.equal(getXAdsPurchasePixelData(purchase).email_address, "stripebuyer@example.com");
+});
+
+test("the X purchase event falls back to Stripe customer_email when customer details have no email", () => {
+  const purchase = paidXAdsPurchaseFromCheckout(checkoutSession({
+    customer_details: null,
+    customer_email: " StripeBuyer@Example.com "
+  }));
+  assert.ok(purchase);
+  assert.equal(getXAdsPurchasePixelData(purchase).email_address, "stripebuyer@example.com");
+});
+
 test("a paid guest Checkout Session must include an email", () => {
   assert.throws(
     () => paidXAdsPurchaseFromCheckout(checkoutSession({

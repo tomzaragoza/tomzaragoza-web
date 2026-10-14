@@ -42,8 +42,7 @@ export default async function CheckoutCompletePage({
           <>
             <PurchasePixelEvent data={getXAdsPurchasePixelData(purchase)} />
             <p>
-              Your {purchase.tier === "pro" ? "Pro" : "Course"} purchase is recorded.
-              The lessons will open when the course launches.
+              Your {purchase.tier === "pro" ? "Pro" : "Course"} purchase is confirmed.
             </p>
             <p>
               When you sign in to access the course, use the same email address

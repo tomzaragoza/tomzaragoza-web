@@ -5,7 +5,6 @@ import type { XAdsPurchasePixelData } from "@/lib/x-ads-purchase-pixel";
 
 export function PurchasePixelEvent({ data }: { data: XAdsPurchasePixelData }) {
   useEffect(() => {
-    const eventId = process.env.NEXT_PUBLIC_X_PURCHASE_EVENT_ID?.trim() || "tw-o6ml8-rfgj9";
     const pixel = (window as Window & { twq?: (...args: unknown[]) => void }).twq;
     if (!pixel) return;
 
@@ -17,7 +16,7 @@ export function PurchasePixelEvent({ data }: { data: XAdsPurchasePixelData }) {
     }
 
     try {
-      pixel("event", eventId, data);
+      pixel("event", "tw-o6ml8-rfgj9", data);
     } catch {
       // Pixel errors must not affect the confirmation page.
       return;

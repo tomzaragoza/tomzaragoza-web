@@ -1,11 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ChartNoAxesCombined, Eye, MousePointer2 } from "lucide-react";
 import type { CourseAccess } from "@/lib/course-access";
 import { canViewCourseLessons } from "@/lib/course-access-policy";
 import type { CourseNavigationItem, CoursePageRecord } from "@/lib/course-content-shared";
 import type { PricingTier } from "@/lib/pricing-parity";
-import { isXAdsPresaleActive } from "@/lib/x-ads-offer";
 import { CourseEditingProvider } from "./course-editing-context";
 import { CourseLessonHeader, CourseLessonBody } from "./course-lesson";
 import { CourseSidebar } from "./course-sidebar";
@@ -13,43 +10,6 @@ import { InlineCourseEditor } from "./inline-course-editor";
 import { MobileCourseNav } from "./mobile-course-nav";
 import { PresaleCheckout } from "./presale-checkout";
 import styles from "./x-ads.module.css";
-
-type CoursePageAccess = CourseAccess | "public";
-
-function CourseAccessGate({
-  access,
-  returnPath,
-  initialNow
-}: {
-  access: CoursePageAccess;
-  returnPath: string;
-  initialNow: number;
-}) {
-  const hasPurchased = access === "course" || access === "pro";
-  const presale = isXAdsPresaleActive(initialNow);
-
-  return (
-    <section className={styles.accessGate} aria-labelledby="course-access-title">
-      <h2 id="course-access-title">
-        {hasPurchased ? "Your presale purchase is confirmed" : presale ? "Buy the Presale" : "Get the course"}
-      </h2>
-      <p>
-        {hasPurchased
-          ? "The lessons are still in development. Your purchase is recorded, and the course will open to customers when it launches."
-          : presale
-            ? "The course is currently in development! Buy at the presale price before the presale ends October 16. Prices go up after that date."
-            : "The presale has ended. Choose the Course or Pro plan below."}
-      </p>
-      {hasPurchased ? (
-        <Link className={styles.presaleButton} href="/x-ads#presale">
-          View your purchase →
-        </Link>
-      ) : (
-        <PresaleCheckout returnPath={returnPath} initialNow={initialNow} compact />
-      )}
-    </section>
-  );
-}
 
 export function CoursePage({
   page,
@@ -59,189 +19,59 @@ export function CoursePage({
   purchaseStatus = null
 }: {
   page: CoursePageRecord;
-  access: CoursePageAccess;
+  access: CourseAccess | "public";
   navigation: readonly CourseNavigationItem[];
   canEdit?: boolean;
   purchaseStatus?: PricingTier | "error" | null;
 }) {
-  const isIntroduction = page.path === "/x-ads";
-  const hasCourseAccess = access !== "public" && canViewCourseLessons(access);
-  const hasMessaging = hasCourseAccess;
-  const confirmedPurchaseStatus = purchaseStatus === "pro"
-    ? access === "pro"
-    : purchaseStatus === "course"
-      ? access === "course" || access === "pro"
-      : false;
-  // Read the request time once so the server and client show the same initial price.
+  const hasCourseAccess = canViewCourseLessons(access);
+  const showAccountControls = access !== "signed-out" && access !== "public";
+  const confirmedPurchase = purchaseStatus === "pro" ? access === "pro"
+    : purchaseStatus === "course" && (access === "course" || access === "pro");
+  // Keep server-rendered prices and the initial client render in sync.
   // eslint-disable-next-line react-hooks/purity
   const initialNow = Date.now();
-  const currentPageIndex = navigation.findIndex((item) => item.path === page.path);
-  const previousPage = currentPageIndex > 0 ? navigation[currentPageIndex - 1] : undefined;
-  const nextPage = currentPageIndex >= 0 ? navigation[currentPageIndex + 1] : undefined;
+  const sections = navigation.filter((section) => section.slug !== "introduction");
+  const currentIndex = sections.findIndex((section) => section.path === page.path);
+  const previousSection = currentIndex > 0 ? sections[currentIndex - 1] : undefined;
+  const nextSection = currentIndex >= 0 ? sections[currentIndex + 1] : undefined;
 
   const content = (
     <main className={styles.page}>
-      <a className={styles.skipLink} href="#course-content">
-        Skip to course content
-      </a>
-
-      <MobileCourseNav
-        currentPath={page.path}
-        navigation={navigation}
-        canEdit={canEdit}
-        showMessages={hasMessaging}
-        showAccountControls={access !== "signed-out" && access !== "public"}
-      />
-
+      <a className={styles.skipLink} href="#course-content">Skip to course content</a>
+      <MobileCourseNav currentPath={page.path} navigation={navigation} canEdit={canEdit}
+        showMessages={canEdit} showAccountControls={showAccountControls} />
       <div className={styles.courseShell}>
-        <CourseSidebar
-          currentPath={page.path}
-          navigation={navigation}
-          canEdit={canEdit}
-          showMessages={hasMessaging}
-          showAccountControls={access !== "signed-out" && access !== "public"}
-        />
-
-        <article className={`${styles.content} ${canEdit && !isIntroduction ? styles.editorContent : ""} ${hasMessaging && !isIntroduction && !canEdit ? styles.annotatedContent : ""}`} id="course-content">
-          {canEdit && !isIntroduction ? (
-            null
-          ) : !isIntroduction ? <CourseLessonHeader page={page} /> : (
-            <header className={styles.pageHeader}>
-              <h1>{page.title}</h1>
-              {isIntroduction ? (
-                <p className={styles.pageDescription}>
-                  Go from complete beginner to getting{" "}
-                  <span className={styles.inlineOutcome}><Eye aria-hidden="true" /> impressions</span>,{" "}
-                  <span className={styles.inlineOutcome}><MousePointer2 aria-hidden="true" /> clicks</span>, and{" "}
-                  <span className={styles.inlineOutcome}><ChartNoAxesCombined aria-hidden="true" /> conversions</span>{" "}
-                  for your product in less than 1 hour.
-                </p>
-              ) : null}
-            </header>
-          )}
-
-          <div className={`${styles.mainContent} ${!isIntroduction && !hasCourseAccess && !canEdit ? styles.gatedMainContent : ""} ${isIntroduction ? styles.introductionContent : ""} ${canEdit && !isIntroduction ? styles.editorMainContent : ""} ${
-            hasMessaging && !isIntroduction && !canEdit ? styles.annotatedMainContent : ""
-          }`}>
-            {canEdit && !isIntroduction ? (
-              <InlineCourseEditor key={page.slug} page={page} />
-            ) : isIntroduction ? (
-              <section className={styles.salesCopy}>
-                {confirmedPurchaseStatus && (purchaseStatus === "course" || purchaseStatus === "pro") ? (
-                  <p className={styles.purchaseNotice} role="status">
-                    Payment confirmed. Your {purchaseStatus === "pro" ? "Pro" : "Course"} presale purchase is recorded.
-                  </p>
-                ) : purchaseStatus === "error" ? (
-                  <p className={styles.purchaseError} role="alert">
-                    We could not confirm this payment yet. Refresh the page in a moment.
-                  </p>
-                ) : null}
-                <div className={styles.authorGreeting}>
-                  <Image
-                    src="/images/tom-zaragoza.jpg"
-                    width={44}
-                    height={44}
-                    alt="Tom Zaragoza"
-                  />
-                  <p>Hey, Tom here!</p>
-                </div>
-                <p>
-                  This course will teach you how to run X ads for whatever product
-                  you are building.
-                </p>
-                <p>
-                  I&apos;m building the course to be{" "}
-                  <em>super</em>{" "}
-                  straightforward and instructional. I get straight to the point,
-                  tell you what you need to do, and explain fundamentals so you know
-                  the reasoning
-                  behind the actions you&apos;ll take.
-                </p>
-                <p>
-                  I&apos;ve been running ads on X since 2019 and I can confidently
-                  say it&apos;s the best place to advertise on for indie hackers,
-                  founders, vibe coders that are building software products. Your
-                  customers are on X, it&apos;s cheap to run ads on the platform,
-                  and it just <em>works</em>.
-                </p>
-                <p>
-                  I&apos;ve found hundreds of customers from X Ads and I&apos;ll show you
-                  everything you need to know to do the same!
-                </p>
-                {hasCourseAccess ? (
-                  <>
-                    <p>
-                      Your account has course preview access.
-                      Continue to the first lesson.
-                    </p>
-                    <Link className={styles.presaleButton} href="/x-ads/principles">
-                      Start the course →
-                    </Link>
-                  </>
-                ) : access === "course" || access === "pro" ? (
-                  <p>
-                    Your {access === "pro" ? "Pro" : "Course"} presale purchase is recorded.
-                    The lessons will open to customers when the course launches.
-                  </p>
-                ) : (
-                  <PresaleCheckout returnPath={page.path} initialNow={initialNow} />
+        <CourseSidebar currentPath={page.path} navigation={navigation} canEdit={canEdit}
+          showMessages={canEdit} showAccountControls={showAccountControls} />
+        <article className={`${styles.content} ${canEdit ? styles.editorContent : ""}`} id="course-content">
+          {purchaseStatus === "error" ? (
+            <p className={styles.dashboardNotice} role="alert">We could not confirm this payment yet. Refresh the page in a moment.</p>
+          ) : confirmedPurchase ? (
+            <p className={styles.dashboardNotice} role="status">Your {purchaseStatus === "pro" ? "Pro" : "Course"} purchase is confirmed.</p>
+          ) : null}
+          {!canEdit ? <CourseLessonHeader page={page} /> : null}
+          <div className={`${styles.mainContent} ${canEdit ? styles.editorMainContent : !hasCourseAccess ? styles.gatedMainContent : styles.readerMainContent}`}>
+            {canEdit ? <InlineCourseEditor key={page.slug} page={page} />
+              : hasCourseAccess ? <CourseLessonBody page={page} />
+                : (
+                  <section className={styles.accessGate} aria-labelledby="course-access-title">
+                    <h2 id="course-access-title">Get the course</h2>
+                    <p>Purchase the course to view its videos and written lessons. If you already bought it, sign in with your purchase email.</p>
+                    <PresaleCheckout returnPath={page.path} initialNow={initialNow} compact />
+                    {!showAccountControls ? <Link className={styles.dashboardTextLink} href={`/sign-in?returnPath=${encodeURIComponent(page.path)}`}>Sign in to your course →</Link> : null}
+                  </section>
                 )}
-                <section className={styles.curriculum} aria-labelledby="curriculum-title">
-                  <h2 id="curriculum-title">Inside the course</h2>
-                  <p>{navigation.length - 1} chapters to help you prepare, launch, and improve your campaigns.</p>
-                  <ol className={styles.chapterList}>
-                    {navigation.slice(1).map((chapter, index) => (
-                      <li key={chapter.path}>
-                        <Link className={styles.chapterLink} href={chapter.path}>
-                          <span className={styles.chapterNumber} aria-hidden="true">
-                            {String(index + 1).padStart(2, "0")}
-                          </span>
-                          <div>
-                            <h3>{chapter.title}</h3>
-                            <p>{chapter.description}</p>
-                          </div>
-                          <span aria-hidden="true">→</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-              </section>
-            ) : hasCourseAccess ? (
-              <CourseLessonBody page={page} />
-            ) : (
-              <CourseAccessGate
-                access={access === "public" ? "signed-out" : access}
-                returnPath={page.path}
-                initialNow={initialNow}
-              />
-            )}
           </div>
-
-          {previousPage || nextPage ? (
-            <nav className={styles.courseFooter} aria-label="Previous and next course pages">
-              {previousPage ? (
-                <Link className={styles.courseFooterLink} href={previousPage.path}>
-                  <span>← Previous</span>
-                  <strong>
-                    {previousPage.path === "/x-ads" ? "Overview" : previousPage.title}
-                  </strong>
-                </Link>
-              ) : null}
-              {nextPage ? (
-                <Link
-                  className={`${styles.courseFooterLink} ${styles.nextCoursePage}`}
-                  href={nextPage.path}
-                >
-                  <span>Next →</span>
-                  <strong>{nextPage.title}</strong>
-                </Link>
-              ) : null}
+          {previousSection || nextSection ? (
+            <nav className={styles.courseFooter} aria-label="Previous and next course sections">
+              {previousSection ? <Link className={styles.courseFooterLink} href={previousSection.path}><span>← Previous</span><strong>{previousSection.title}</strong></Link> : null}
+              {nextSection ? <Link className={`${styles.courseFooterLink} ${styles.nextCoursePage}`} href={nextSection.path}><span>Next →</span><strong>{nextSection.title}</strong></Link> : null}
             </nav>
           ) : null}
         </article>
       </div>
     </main>
   );
-  return canEdit && !isIntroduction ? <CourseEditingProvider>{content}</CourseEditingProvider> : content;
+  return canEdit ? <CourseEditingProvider>{content}</CourseEditingProvider> : content;
 }

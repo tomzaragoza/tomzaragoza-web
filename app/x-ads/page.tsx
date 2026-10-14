@@ -1,7 +1,6 @@
-import { CourseDashboard } from "./course-dashboard";
+import { redirect } from "next/navigation";
 import { CourseLanding } from "./course-landing";
 import { getCourseAccess } from "@/lib/course-access";
-import { getCourseAdminAccess } from "@/lib/course-admin";
 import { getCourseNavigation } from "@/lib/course-content";
 import { pricingTiers, type PricingTier } from "@/lib/pricing-parity";
 
@@ -18,22 +17,15 @@ export default async function IntroductionPage({
     : pricingTiers.includes(purchase as PricingTier)
       ? purchase as PricingTier
       : null;
-  const [navigation, access, adminAccess] = await Promise.all([
+  const [navigation, access] = await Promise.all([
     getCourseNavigation(),
-    getCourseAccess(),
-    getCourseAdminAccess()
+    getCourseAccess()
   ]);
 
-  if (access === "signed-out") {
-    return <CourseLanding navigation={navigation} purchaseStatus={purchaseStatus} />;
+  const firstSection = navigation.find((section) => section.slug !== "introduction");
+  if (access !== "signed-out" && firstSection) {
+    redirect(`${firstSection.path}${purchaseStatus ? `?purchase=${purchaseStatus}` : ""}`);
   }
 
-  return (
-    <CourseDashboard
-      access={access}
-      navigation={navigation}
-      canEdit={adminAccess.status === "authorized"}
-      purchaseStatus={purchaseStatus}
-    />
-  );
+  return <CourseLanding navigation={navigation} purchaseStatus={purchaseStatus} />;
 }

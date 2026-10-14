@@ -1,9 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- Private media uses authenticated redirect URLs. */
 import type { CSSProperties, ReactNode } from "react";
 import { type CourseBlock, type CourseInline, courseBlockText, safeContentUrl } from "@/lib/course-blocks";
-import { AnnotationBlock } from "./course-annotations";
 import { CourseVideo } from "./course-video";
-import { CourseNoteThread } from "./course-note-thread";
 import styles from "./course-document.module.css";
 
 const colors: Record<string, string> = { gray: "#787774", brown: "#9f6b53", red: "#d44c47", orange: "#d9730d", yellow: "#b68a00", green: "#448361", blue: "#337ea9", purple: "#9065b0", pink: "#c14c8a" };
@@ -29,7 +27,7 @@ function BlockContent({ block, pageSlug }: { block: CourseBlock; pageSlug?: stri
     case "bulletListItem": case "numberedListItem": return <>{content}</>;
     case "checkListItem": return <p><input type="checkbox" checked={block.props.checked ?? false} readOnly aria-label="Checklist item" /> {content}</p>;
     case "toggleListItem": return <details><summary>{content}</summary><CourseBlocks blocks={block.children} pageSlug={pageSlug} /></details>;
-    case "quote": return block.id.endsWith(":note") && pageSlug ? <CourseNoteThread note={courseBlockText(block)} pageSlug={pageSlug} sectionId={block.id.slice(0, -5)} /> : <blockquote>{content}</blockquote>;
+    case "quote": return <blockquote>{content}</blockquote>;
     case "codeBlock": return <pre><code>{courseBlockText(block)}</code></pre>;
     case "divider": return <hr />;
     case "image": return <figure><img src={url} alt={block.props.name || block.props.caption || "Course image"} loading="lazy" style={{ width: block.props.previewWidth, maxWidth: "100%" }} />{block.props.caption && <figcaption>{block.props.caption}</figcaption>}</figure>;
@@ -54,11 +52,12 @@ export function CourseBlocks({ blocks, pageSlug }: { blocks: readonly CourseBloc
     else groups.push([block]);
   }
   function render(block: CourseBlock, list = false) {
+    const Element = list ? "li" : "div";
     const style: CSSProperties = { textAlign: block.props.textAlignment, color: color(block.props.textColor), backgroundColor: color(block.props.backgroundColor) };
-    return <AnnotationBlock as={list ? "li" : "div"} key={block.id} blockId={courseBlockText(block).trim() ? block.id : undefined} className={styles.block}>
+    return <Element key={block.id} className={styles.block}>
       <div style={style}><BlockContent block={block} pageSlug={pageSlug} /></div>
       {block.children.length > 0 && block.type !== "toggleListItem" && <div className={styles.children}><CourseBlocks blocks={block.children} pageSlug={pageSlug} /></div>}
-    </AnnotationBlock>;
+    </Element>;
   }
   return <div className={styles.document}>{groups.map(group => group[0].type === "numberedListItem" ? <ol key={group[0].id} start={group[0].props.start}>{group.map(block => render(block, true))}</ol> : group[0].type === "bulletListItem" ? <ul key={group[0].id}>{group.map(block => render(block, true))}</ul> : render(group[0]))}</div>;
 }

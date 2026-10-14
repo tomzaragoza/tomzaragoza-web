@@ -10,5 +10,5 @@ export function hasComplimentaryCourseAccess(email: string | null | undefined) {
 }
 
 export function canViewCourseLessons(access: string) {
-  return access === "owner";
+  return access === "owner" || access === "course" || access === "pro";
 }

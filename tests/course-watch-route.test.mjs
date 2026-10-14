@@ -39,4 +39,10 @@ test("watch API checks authentication, entitlement, origin, and the published vi
   const response = await GET(get(valid));
   assert.equal(response.headers.get("cache-control"), "private, no-store");
   assert.equal((await response.json()).progress.userId, "viewer");
+  for (const access of ["course", "pro"]) {
+    state.access = access;
+    assert.equal((await GET(get(valid))).status, 200);
+    assert.equal((await POST(post(valid))).status, 200);
+    assert.equal(state.writes.at(-1).user.id, "viewer");
+  }
 });

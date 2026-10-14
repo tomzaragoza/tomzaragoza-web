@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
-import { ArrowRight, BookOpen, ChevronRight, Library, MessageSquare } from "lucide-react";
+import { ChevronRight, MessageSquare } from "lucide-react";
 import { AuthControls } from "@/app/components/auth-controls";
 import type { CourseNavigationItem } from "@/lib/course-content-shared";
 import { arrangeCoursePages } from "@/lib/course-structure";
@@ -26,7 +26,7 @@ function CourseGroupNavigation({ item, children, currentPath, onNavigate }: {
   onNavigate?: () => void;
 }) {
   const id = useId();
-  const [expanded, setExpanded] = useState(currentPath === item.path || children.some(child => child.path === currentPath));
+  const [expanded, setExpanded] = useState(true);
   return <div className={styles.courseGroup}>
     <div className={styles.courseGroupHeading}>
       <Link href={item.path} onClick={onNavigate} aria-current={currentPath === item.path ? "page" : undefined}>{item.title}</Link>
@@ -48,12 +48,11 @@ export function WorkspaceNavigation({
   const canEdit = adminCanEdit && !preview;
   const [messageCount, setMessageCount] = useState<number | null>(null);
   const [countFailed, setCountFailed] = useState(false);
-  const isLesson = currentPath !== "/x-ads" && navigation.some((item) => item.path === currentPath);
   const messagesPath = canEdit ? "/admin/course/messages" : "/x-ads/messages";
-  const coursePages = arrangeCoursePages(navigation);
+  const coursePages = arrangeCoursePages(navigation).filter(item => item.slug !== "introduction");
 
   useEffect(() => {
-    if (!showMessages || preview) return;
+    if (!canEdit || !showMessages || preview) return;
     const controller = new AbortController();
     fetch(`/api/course/message-summary${canEdit ? "?scope=admin" : ""}`, { signal: controller.signal })
       .then(async (response) => {
@@ -78,9 +77,7 @@ export function WorkspaceNavigation({
         <span>Learn X Ads<span>by Tom Zaragoza</span></span>
       </Link>
 
-      <nav className={styles.workspaceNavigation} aria-label="Workspace navigation">
-        <details className={styles.courseDisclosure} open={isLesson}>
-          <summary><BookOpen aria-hidden="true" /><span>X Ads Course</span><ChevronRight className={styles.disclosureArrow} aria-hidden="true" /></summary>
+      <nav className={styles.workspaceNavigation} aria-label="Course sections">
           <div className={styles.courseTree}>
             {coursePages.filter(item => !item.parentSlug).map((item) => item.pageKind === "group" ? (
               <CourseGroupNavigation key={`${item.slug}:${currentPath}`} item={item} currentPath={currentPath} onNavigate={onNavigate}>
@@ -89,31 +86,20 @@ export function WorkspaceNavigation({
             ) : (
               <Link href={item.path} key={item.path} onClick={onNavigate}
                 aria-current={currentPath === item.path ? "page" : undefined}>
-                {item.path === "/x-ads" ? "Overview" : item.title}
+                {item.title}
               </Link>
             ))}
           </div>
-        </details>
-
-        <Link href="/x-ads/library" className={styles.workspaceLink} onClick={onNavigate}
-          aria-current={currentPath === "/x-ads/library" ? "page" : undefined}>
-          <Library aria-hidden="true" /><span>Ads Library</span>
-        </Link>
-
-        <Link href={messagesPath} className={styles.workspaceLink} onClick={onNavigate}
+        {canEdit && showMessages ? <Link href={messagesPath} className={styles.workspaceLink} onClick={onNavigate}
           aria-current={currentPath.includes("/messages") ? "page" : undefined}>
           <MessageSquare aria-hidden="true" />
           <span>Messages <span className={styles.messageCount} title={!preview && countFailed ? "Message count unavailable" : undefined}>
             ({!showMessages || preview ? 0 : countFailed ? "—" : messageCount ?? "…"})
           </span></span>
-        </Link>
+        </Link> : null}
       </nav>
 
       <div className={styles.sidebarBottom}>
-        <div className={styles.sidebarPurchase}>
-          <Link className={styles.presaleButton} href="/x-ads#presale" onClick={onNavigate}>Buy Full Access <ArrowRight aria-hidden="true" /></Link>
-          <Link className={styles.sidebarProLink} href="/x-ads#pro-plan" onClick={onNavigate}>Explore Pro <ArrowRight aria-hidden="true" /></Link>
-        </div>
         {canEdit ? <Link className={styles.cmsLink} href="/admin/course" onClick={onNavigate}>Manage course pages</Link> : null}
         {showAccountControls ? <div className={styles.workspaceAccount}><AuthControls courseAccount showMessages={false} /></div> : null}
       </div>

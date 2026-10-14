@@ -15,12 +15,14 @@ test("complimentary course access uses the configured Google email", () => {
   assert.equal(hasComplimentaryCourseAccess(null), false);
 });
 
-test("presale purchases do not open lessons", () => {
+test("paid Course and Pro customers can read lessons; unpaid users cannot", () => {
   assert.equal(canViewCourseLessons("owner"), true);
-  assert.equal(canViewCourseLessons("course"), false);
-  assert.equal(canViewCourseLessons("pro"), false);
+  assert.equal(canViewCourseLessons("course"), true);
+  assert.equal(canViewCourseLessons("pro"), true);
   assert.equal(canViewCourseLessons("signed-out"), false);
   assert.equal(canViewCourseLessons("upgrade-required"), false);
+  assert.equal(canViewCourseLessons("public"), false);
+  assert.equal(canViewCourseLessons("unknown"), false);
 });
 
 test("course entitlement ranks preserve Pro access", () => {
