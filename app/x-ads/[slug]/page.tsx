@@ -52,7 +52,7 @@ export default async function CourseContentPage({ params, searchParams }: Course
 
   return (
     <CoursePage
-      page={canEdit || canViewCourseLessons(access) ? page : { ...page, content: [], blocks: [], mainVideo: null }}
+      page={canEdit || canViewCourseLessons(access) ? page : { ...page, outcome: undefined, content: [], blocks: [], mainVideo: null }}
       access={access}
       navigation={navigation}
       canEdit={adminAccess.status === "authorized"}

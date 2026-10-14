@@ -19,12 +19,12 @@ It appears after Set up your analytics and before Launch your first campaign.
 
 The screenshots and short GIF use the current X Events Manager interface. They were captured on September 16, 2026.
 
-The public versions remove the ads-account identifier, the pixel identifier, product-specific event names, and exact activity timestamps. The base-code example uses `YOUR_PIXEL_ID`.
+The lesson images remove the ads-account identifier, the pixel identifier, product-specific event names, and exact activity timestamps. The base-code example uses `YOUR_PIXEL_ID`.
 
-- `public/images/tracking-methods.png`
-- `public/images/tracking-base-code.png`
-- `public/images/tracking-create-event.gif`
-- `public/images/tracking-event-status.png`
+- `private/course-images/tracking-methods.png`
+- `private/course-images/tracking-base-code.png`
+- `private/course-images/tracking-create-event.gif`
+- `private/course-images/tracking-event-status.png`
 
 ## Official references
 

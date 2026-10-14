@@ -3,7 +3,6 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { MongoClient, ObjectId, type Collection } from "mongodb";
 import { getGoogleAuth } from "@/lib/google-auth";
-import { hasComplimentaryCourseAccess } from "@/lib/course-access-policy";
 import { isCourseAdminEmail } from "@/lib/course-admin-policy";
 import type {
   AdminCourseThread,
@@ -179,10 +178,7 @@ export async function getCourseMessagingUser(
   const session = await auth.api.getSession({ headers: requestHeaders }).catch(() => null);
   if (!session?.user.email) return null;
 
-  const hasProAccess = hasComplimentaryCourseAccess(session.user.email) ||
-    isCourseAdminEmail(session.user.email);
-
-  if (!hasProAccess) {
+  if (!isCourseAdminEmail(session.user.email)) {
     return null;
   }
 

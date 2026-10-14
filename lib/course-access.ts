@@ -1,7 +1,7 @@
 import "server-only";
 
 import { headers } from "next/headers";
-import { hasComplimentaryCourseAccess } from "@/lib/course-access-policy";
+import { isCourseAdminEmail } from "@/lib/course-admin-policy";
 import { getPurchasedCourseTier } from "@/lib/course-entitlements";
 import { getGoogleAuth } from "@/lib/google-auth";
 import type { PricingTier } from "@/lib/pricing-parity";
@@ -24,7 +24,7 @@ export async function getCourseAccess(requestHeaders?: Headers): Promise<CourseA
       return "signed-out";
     }
 
-    if (hasComplimentaryCourseAccess(session.user.email)) return "owner";
+    if (isCourseAdminEmail(session.user.email)) return "owner";
 
     return await getPurchasedCourseTier(
       session.user.id,

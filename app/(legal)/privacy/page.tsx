@@ -86,8 +86,8 @@ export default function PrivacyPage() {
         cookies for sign-in and session security. PostHog uses cookies and local
         browser storage to recognize returning browsers. You can clear or block cookies
         in your browser, but sign-in features may stop working. The course
-        introduction is public. During the presale, course lessons are limited
-        to two preview accounts.
+        description is public. Course lessons and lesson media require a paid
+        purchase. The course administrator has access to edit the content.
       </p>
 
       <h2>Service providers and disclosure</h2>

@@ -45,8 +45,12 @@ region. The previous PostHog regional pricing flag is not used for this offer.
 
 Pro includes the course and one 30-minute consultation with Tom.
 Course and Pro customers can read published lessons after signing in with
-their purchase email. Complimentary accounts retain lesson access.
+their purchase email. Only the course administrator can access lessons without
+a purchase for editing. There are no complimentary customer accounts.
 Users without a purchase cannot read lesson content or private course media.
+The built-in lesson images are stored in `private/course-images` and served
+through a purchase-protected `/images/[name]` route. Course descriptions and
+promotional assets remain public.
 After sign-in, `/x-ads` opens the first course section. The sidebar lists
 sections and their child pages. Each section shows its video and written
 lesson in the main content area. The customer reader has no messaging or

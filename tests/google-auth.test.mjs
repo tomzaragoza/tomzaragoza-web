@@ -3,17 +3,8 @@ import { test } from "node:test";
 import { randomBytes } from "node:crypto";
 import { getGoogleAuth } from "../lib/google-auth.ts";
 import { isCourseAdminEmail } from "../lib/course-admin-policy.ts";
-import { canViewCourseLessons, hasComplimentaryCourseAccess } from "../lib/course-access-policy.ts";
+import { canViewCourseLessons } from "../lib/course-access-policy.ts";
 import { courseTierFromRank } from "../lib/course-entitlements.ts";
-
-test("complimentary course access uses the configured Google email", () => {
-  assert.equal(hasComplimentaryCourseAccess("tomdzaragoza@gmail.com"), true);
-  assert.equal(hasComplimentaryCourseAccess(" TOMDZARAGOZA@GMAIL.COM "), true);
-  assert.equal(hasComplimentaryCourseAccess("todazar@gmail.com"), true);
-  assert.equal(hasComplimentaryCourseAccess(" TODAZAR@GMAIL.COM "), true);
-  assert.equal(hasComplimentaryCourseAccess("someone@example.com"), false);
-  assert.equal(hasComplimentaryCourseAccess(null), false);
-});
 
 test("paid Course and Pro customers can read lessons; unpaid users cannot", () => {
   assert.equal(canViewCourseLessons("owner"), true);

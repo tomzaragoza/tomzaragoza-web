@@ -16,6 +16,7 @@ export const metadata: Metadata = { title: "Ads Library | X Ads", robots: { inde
 export default async function AdsLibraryPage() {
   const access = await getCourseAccess();
   if (access === "signed-out") redirect("/sign-in?returnPath=%2Fx-ads%2Flibrary");
+  if (!canViewCourseLessons(access)) redirect("/x-ads");
   const [navigation, adminAccess] = await Promise.all([getCourseNavigation(), getCourseAdminAccess()]);
   const canEdit = adminAccess.status === "authorized";
   const showMessages = canViewCourseLessons(access);
