@@ -1,7 +1,7 @@
 import type { PricingTier } from "./pricing-parity";
 
-// September 30, 2026 at 12:00 a.m. in Toronto (EDT).
-export const xAdsPresaleEndsAt = Date.parse("2026-09-30T04:00:00.000Z");
+// October 17, 2026 at 12:00 a.m. in Toronto (EDT).
+export const xAdsPresaleEndsAt = Date.parse("2026-10-17T04:00:00.000Z");
 
 const prices = {
   course: { presale: 2000, regular: 4900 },

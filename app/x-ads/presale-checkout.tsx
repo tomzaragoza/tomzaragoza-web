@@ -193,7 +193,7 @@ export function PresaleCheckout({
         <>
           <p>I&apos;m currently developing the course and recording video lessons.</p>
           <p>
-            I launch on September 30th and prices go up on that date, so buy the
+            Presale ends October 16th. Prices go up after that date, so buy the
             presale to get it at a discount!
           </p>
         </>
@@ -210,7 +210,7 @@ export function PresaleCheckout({
           ))}
         </div>
       ) : null}
-      {presale ? <p className={styles.presaleDeadline}>Presale ends September 30, 2026 at 12:00 a.m. ET.</p> : null}
+      {presale ? <p className={styles.presaleDeadline}>Presale ends October 16, 2026 at 11:59 p.m. ET.</p> : null}
       <div className={styles.pricingPlans} aria-label="Choose a course plan">
         {plans.filter((plan) => tiers.includes(plan.tier)).map((plan) => (
           <article

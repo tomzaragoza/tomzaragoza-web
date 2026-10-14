@@ -5,7 +5,6 @@ import { ArrowUp, Captions, Maximize, Pause, Play, Volume2, VolumeX } from "luci
 import { getCourseVideoSource } from "@/lib/course-video";
 import { videoResumePosition } from "@/lib/course-watch-shared";
 import type { CourseVideo as CourseVideoDefinition } from "@/lib/course-content-shared";
-import { useCourseEditing } from "./course-editing-context";
 import { useVideoDock } from "./course-video-layout";
 import { useWatchProgress } from "./use-watch-progress";
 import { CourseEmbedVideo } from "./course-embed-video";
@@ -29,10 +28,9 @@ export function CourseVideo(props: Props) {
 
 function VideoPlayer({ video, pageSlug, videoId = "preview" }: Props) {
   const source = getCourseVideoSource(video.url);
-  const { preview } = useCourseEditing();
   const native = useRef<HTMLVideoElement>(null);
   const { slot, player, dock, activate, returnToVideo } = useVideoDock(videoId);
-  const canTrack = Boolean(pageSlug && !preview && source && !source.src.startsWith("https://www.loom.com/"));
+  const canTrack = Boolean(pageSlug && source && !source.src.startsWith("https://www.loom.com/"));
   const progress = useWatchProgress(canTrack ? { pageSlug: pageSlug!, videoId, source: video.url } : null);
   const [playing, setPlaying] = useState(false);
   const [duration, setDuration] = useState(0);

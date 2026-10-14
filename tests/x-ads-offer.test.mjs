@@ -7,8 +7,8 @@ import {
   xAdsPresaleEndsAt
 } from "../lib/x-ads-offer.ts";
 
-test("both plans change from presale to regular price at midnight ET on September 30", () => {
-  assert.equal(xAdsPresaleEndsAt, Date.parse("2026-09-30T04:00:00.000Z"));
+test("both plans change from presale to regular price at the end of October 16 in Eastern Time", () => {
+  assert.equal(xAdsPresaleEndsAt, Date.parse("2026-10-17T04:00:00.000Z"));
   assert.equal(isXAdsPresaleActive(xAdsPresaleEndsAt - 1), true);
   assert.equal(getXAdsPrice("course", xAdsPresaleEndsAt - 1), 2000);
   assert.equal(getXAdsPrice("pro", xAdsPresaleEndsAt - 1), 9900);

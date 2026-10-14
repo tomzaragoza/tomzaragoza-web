@@ -13,7 +13,7 @@ if (projectToken) {
     mask_all_element_attributes: true,
     before_send: (event) => {
       // Admin pages contain access tokens and editable internal content.
-      if (window.location.pathname === "/admin" || window.location.pathname.startsWith("/admin/")) {
+      if (window.location.pathname === "/admin" || window.location.pathname.startsWith("/admin/") || window.location.pathname === "/x/success") {
         return null;
       }
       return event;

@@ -37,7 +37,7 @@ function CourseAccessGate({
         {hasPurchased
           ? "The lessons are still in development. Your purchase is recorded, and the course will open to customers when it launches."
           : presale
-            ? "The course is currently in development! Buy at the presale price before the September 30 launch. Prices go up then."
+            ? "The course is currently in development! Buy at the presale price before the presale ends October 16. Prices go up after that date."
             : "The presale has ended. Choose the Course or Pro plan below."}
       </p>
       {hasPurchased ? (

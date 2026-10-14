@@ -48,7 +48,7 @@ export function CourseLanding({ navigation, purchaseStatus }: {
               <div className={styles.googleAction}><AuthControls signInOnly returnPath="/x-ads" /></div>
               <a href="#curriculum" className={styles.textLink}>Explore the course <ArrowDown aria-hidden="true" /></a>
             </div>
-            <p className={styles.accessNote}>{isXAdsPresaleActive(initialNow) ? "Lessons launch September 30. Presale is open." : "Sign in to view your account and course access."}</p>
+            <p className={styles.accessNote}>{isXAdsPresaleActive(initialNow) ? "Presale is open until October 16." : "Sign in to view your account and course access."}</p>
           </div>
           <LandingVideo />
         </section>

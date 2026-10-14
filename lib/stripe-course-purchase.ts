@@ -28,12 +28,19 @@ export function paidXAdsPurchaseFromCheckout(
     return null;
   }
 
-  const tier = checkoutSession.metadata?.course_tier;
-  const userId = checkoutSession.client_reference_id || checkoutSession.metadata?.user_id || null;
+  // Payment Link client_reference_id is public input, not an authenticated account ID.
+  const paymentLinkId = typeof checkoutSession.payment_link === "string"
+    ? checkoutSession.payment_link
+    : checkoutSession.payment_link?.id;
+  const isCoursePaymentLink = paymentLinkId === "plink_1ULCVcLq4cPFl2NmpDfdZMqk";
+  const tier = isCoursePaymentLink ? "course" : checkoutSession.metadata?.course_tier;
+  const userId = checkoutSession.payment_link
+    ? null
+    : checkoutSession.client_reference_id || checkoutSession.metadata?.user_id || null;
 
   if (
     !isPricingTier(tier) ||
-    checkoutSession.metadata?.purchase !== `x-ads-${tier}`
+    (!isCoursePaymentLink && checkoutSession.metadata?.purchase !== `x-ads-${tier}`)
   ) {
     return null;
   }

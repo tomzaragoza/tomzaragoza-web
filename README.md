@@ -38,8 +38,8 @@ subject to the project's geographic data settings.
 ### Course pricing and checkout
 
 The Course presale price is $20 USD, reduced from $49 USD. The Pro presale
-price is $99 USD, reduced from $198 USD. The presale ends on September 30,
-2026 at 12:00 a.m. Eastern Time. The server changes both Checkout prices to
+price is $99 USD, reduced from $198 USD. The presale ends on October 16,
+2026 at 11:59 p.m. Eastern Time. The server changes both Checkout prices to
 their regular amounts at that time. Both plans use fixed USD prices in every
 region. The previous PostHog regional pricing flag is not used for this offer.
 
@@ -79,6 +79,17 @@ and a hashed Checkout Session ID as its conversion ID. A browser session sends
 that event once per purchase. Set the `NEXT_PUBLIC_X_*` values before building
 only if you need different IDs. Use X Pixel Helper and Events Manager to verify
 the live events.
+
+The Course Payment Link `plink_1ULCVcLq4cPFl2NmpDfdZMqk` redirects to
+`https://tomzaragoza.com/x/success?session_id={CHECKOUT_SESSION_ID}`.
+Stripe replaces the placeholder with the completed Checkout Session ID.
+The server retrieves that session and requires a paid course purchase before
+it passes the checkout email to `tw-o6ml8-rfgj9`. The signed webhook records
+course access even if the buyer does not return. Public Payment Link reference
+IDs do not identify authenticated accounts. Purchases use the checkout email.
+The success page is excluded from PostHog events and search indexing.
+The presale lasts through October 16 in Eastern Time. The fixed Payment Link
+price must be changed or the link deactivated in Stripe when the presale ends.
 
 To verify a deployment, open the site and navigate to another course page.
 Check for `$pageview` events in the PostHog activity feed. The two events should

@@ -1,7 +1,7 @@
 .document { min-width: 0; line-height: 1.75; overflow-wrap: anywhere; }
-.block { margin: 0 0 20px; white-space: pre-wrap; }
+.block { margin: 0 0 28px; white-space: pre-wrap; }
 .block p { margin: 0; }
-.block h2, .block h3, .block h4 { margin: 28px 0 12px; line-height: 1.3; }
+.block h2, .block h3, .block h4 { margin: 48px 0 16px; line-height: 1.3; }
 .block figure { margin: 16px 0; }
 .block img, .block video, .block audio { max-width: 100%; border-radius: 8px; }
 .block figcaption { color: var(--course-muted, #a6a69d); font-size: 14px; margin-top: 8px; }
@@ -45,8 +45,8 @@
 .editor :global(.bn-container) { --bn-font-family: var(--font-inter), Arial, sans-serif; --bn-colors-editor-background: var(--course-background, #151515); --bn-colors-editor-text: var(--course-text, #f2f2ec); }
 .blockEditor { margin-top: 36px; }
 .editor :global(.bn-editor) { padding: 12px 0 100px 38px; }
-.editor :global(.bn-block-content) { padding-block: 8px; line-height: 1.75; }
-.editor :global(.bn-block-content[data-content-type="heading"]) { padding-top: 28px; padding-bottom: 12px; }
+.editor :global(.bn-block-content) { padding-block: 12px; line-height: 1.75; }
+.editor :global(.bn-block-content[data-content-type="heading"]) { padding-top: 40px; padding-bottom: 16px; }
 .editor :global(.bn-block-content[data-content-type="image"]),
 .editor :global(.bn-block-content[data-content-type="video"]),
 .editor :global(.bn-block-content[data-content-type="table"]) { padding-block: 20px; }

@@ -3,6 +3,9 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type CSSProperties, type Dispatch, type ReactNode, type RefObject, type SetStateAction } from "react";
 import styles from "./course-video.module.css";
 
+// Set to true to restore the floating video and side-by-side scroll layout.
+const videoDockingEnabled = false;
+
 type Layout = {
   root: RefObject<HTMLDivElement | null>;
   activeId: string | null;
@@ -27,7 +30,7 @@ export function useVideoDock(id: string) {
   const player = useRef<HTMLDivElement>(null);
   const [dock, setDock] = useState<{ style: CSSProperties; height: number } | null>(null);
   useEffect(() => {
-    if (!layout || layout.activeId !== id || !slot.current) return;
+    if (!videoDockingEnabled || !layout || layout.activeId !== id || !slot.current) return;
     let threshold: number | null = null;
     let height = 0;
     let frame = 0;
@@ -79,7 +82,6 @@ export function useVideoDock(id: string) {
     slot, player, dock: activeDock,
     activate: () => layout?.setActiveId(id),
     returnToVideo: () => {
-      layout?.setActiveId(null);
       slot.current?.scrollIntoView({ block: "start", behavior: "instant" });
     }
   };

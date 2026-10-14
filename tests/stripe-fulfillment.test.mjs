@@ -80,3 +80,21 @@ test("a Checkout Session cannot grant access to another account", () => {
     /different account/
   );
 });
+
+test("the course Payment Link accepts paid sessions without course metadata", () => {
+  const purchase = paidXAdsPurchaseFromCheckout(checkoutSession({
+    payment_link: "plink_1ULCVcLq4cPFl2NmpDfdZMqk",
+    metadata: {},
+    client_reference_id: "publicly_supplied_user_id"
+  }));
+  assert.equal(purchase?.tier, "course");
+  assert.equal(purchase?.email, "buyer@example.com");
+  assert.equal(purchase?.userId, null);
+});
+
+test("expanded Payment Links are recognized and unpaid link sessions are rejected", () => {
+  const payment_link = { id: "plink_1ULCVcLq4cPFl2NmpDfdZMqk" };
+  assert.equal(paidXAdsPurchaseFromCheckout(checkoutSession({ payment_link, metadata: {} }))?.tier, "course");
+  assert.equal(paidXAdsPurchaseFromCheckout(checkoutSession({ payment_link, metadata: {}, payment_status: "unpaid" })), null);
+  assert.equal(paidXAdsPurchaseFromCheckout(checkoutSession({ payment_link: "plink_other", metadata: {} })), null);
+});

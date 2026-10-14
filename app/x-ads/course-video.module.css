@@ -22,7 +22,7 @@
 .player:fullscreen { display: flex; flex-direction: column; justify-content: center; border: 0; border-radius: 0; }
 .player:fullscreen .screen { flex: 1; min-height: 0; aspect-ratio: auto; }
 @media (min-width: 1100px) {
-  .layout[data-course-video-docked="true"] { padding-left: calc(42% + 28px); }
+  .layout[data-course-video-docked="true"] { padding-left: calc(42% + clamp(36px, 3.5vw, 64px)); }
 }
 @media (max-width: 1099px) {
   .docked .volume { display: none; }

@@ -183,7 +183,7 @@ export function CourseNoteThread({
               disabled={isLoading || isSending}
             />
             <div className={styles.lessonReplyFooter}>
-              <small>{preview ? "Preview only. Comments are not sent." : "Private between you and Tom."}</small>
+              {!preview && <small>Private between you and Tom.</small>}
               <button type="submit" disabled={preview || isLoading || isSending || !draft.trim()}>
                 {isLoading ? "Loading…" : isSending ? "Sending…" : "Send"}
               </button>
