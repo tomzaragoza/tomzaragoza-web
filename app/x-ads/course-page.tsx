@@ -56,10 +56,16 @@ export function CoursePage({
               : hasCourseAccess ? <CourseLessonBody page={page} />
                 : (
                   <section className={styles.accessGate} aria-labelledby="course-access-title">
-                    <h2 id="course-access-title">Get the course</h2>
-                    <p>Purchase the course to view its videos and written lessons. If you already bought it, sign in with your purchase email.</p>
-                    <PresaleCheckout returnPath={page.path} initialNow={initialNow} compact />
-                    {!showAccountControls ? <Link className={styles.dashboardTextLink} href={`/sign-in?returnPath=${encodeURIComponent(page.path)}`}>Sign in to your course →</Link> : null}
+                    <h2 id="course-access-title">{showAccountControls ? "Get the course" : "Sign in to view this lesson"}</h2>
+                    <p>{showAccountControls
+                      ? "Purchase the course to view its videos and written lessons. If you already bought it, sign in with your purchase email."
+                      : "Sign in with your purchase email to view the videos and written lessons. If you haven't bought the course, you can view the plans below."}</p>
+                    {showAccountControls ? <PresaleCheckout returnPath={page.path} initialNow={initialNow} compact /> : (
+                      <div className={styles.accessActions}>
+                        <Link className={styles.presaleButton} href={`/sign-in?returnPath=${encodeURIComponent(page.path)}`}>Sign in to your course</Link>
+                        <Link className={styles.dashboardTextLink} href="/x-ads#presale">View course plans →</Link>
+                      </div>
+                    )}
                   </section>
                 )}
           </div>
