@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Fragment } from "react";
 
 const projects = [
@@ -7,8 +6,8 @@ const projects = [
     href: "https://crawlconsole.com"
   },
   {
-    name: "workbenchy",
-    href: "https://workbenchy.com"
+    name: "searchata",
+    href: "https://searchata.com"
   },
   {
     name: "vocalmatic",
@@ -40,9 +39,6 @@ export default function Home() {
     <main className="home">
       <section className="intro" aria-labelledby="site-title">
         <h1 id="site-title">Tom Zaragoza</h1>
-        <p className="course-promo">
-          NEW: <Link href="/x-ads">Learn how to run X Ads for your product</Link>
-        </p>
         <p className="building-sentence">
           building{" "}
           {projects.map((link, index) => (
@@ -64,11 +60,6 @@ export default function Home() {
             </Fragment>
           ))}
         </nav>
-        <footer className="home-footer">
-          <Link href="/login">login</Link>{", "}
-          <Link href="/privacy">privacy</Link>{", "}
-          <Link href="/terms">terms</Link>
-        </footer>
       </section>
     </main>
   );

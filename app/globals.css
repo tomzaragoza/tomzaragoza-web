@@ -227,15 +227,6 @@ label {
   text-decoration: none;
 }
 
-.intro .course-promo {
-  margin-top: 24px;
-  line-height: 1.75;
-}
-
-.course-promo a {
-  display: inline;
-}
-
 .download-page {
   display: grid;
   min-height: 100dvh;
@@ -309,17 +300,6 @@ label {
 .intro .social-links a {
   display: inline;
   width: auto;
-}
-
-.home-footer {
-  margin-top: 24px;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.75;
-}
-
-.home-footer a {
-  color: inherit;
 }
 
 .admin-shell {
