@@ -2,24 +2,24 @@ import { Fragment } from "react";
 
 const projects = [
   {
-    name: "crawlconsole",
-    href: "https://crawlconsole.com"
-  },
-  {
     name: "searchata",
     href: "https://searchata.com"
+  },
+  {
+    name: "dataventory",
+    href: "https://dataventory.com"
   },
   {
     name: "vocalmatic",
     href: "https://vocalmatic.com"
   },
   {
-    name: "carpio gym",
-    href: "https://carpio247.com"
-  },
-  {
     name: "poetrics",
     href: "https://poetrics.ai"
+  },
+  {
+    name: "carpio gym",
+    href: "https://carpio247.com"
   }
 ];
 
